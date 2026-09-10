@@ -10,23 +10,6 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# Import Modules (from /modules folder)
-# ---------------------------------------------------------
-import modules.sopai as sopai
-import modules.validateai as validateai
-import modules.qcai as qcai
-import modules.trainai as trainai
-import modules.reasonai as reasonai
-import modules.bizdocai as bizdocai
-import modules.bizagentai as bizagentai
-
-import modules.biofilmai_multimodal as biofilmai_multimodal
-import modules.biofilmnn_diagnostics as biofilmnn_diagnostics
-import modules.dashboards_visualization as dashboards_visualization
-import modules.biocontrol_inhibition as biocontrol_inhibition
-import modules.assayai_design as assayai_design
-
-# ---------------------------------------------------------
 # Sidebar Navigation (Custom Router)
 # ---------------------------------------------------------
 st.sidebar.title("SciProAI Navigation")
@@ -50,7 +33,7 @@ choice = st.sidebar.radio(
 )
 
 # ---------------------------------------------------------
-# Routing Logic (NO .main() calls)
+# Routing Logic (NO .main() calls — modules run automatically)
 # ---------------------------------------------------------
 if choice == "🏢 SOPAI":
     import modules.sopai
@@ -88,6 +71,9 @@ elif choice == "🔬 Biocontrol Inhibition":
 elif choice == "🔬 AssayAI Design":
     import modules.assayai_design
 
+# ---------------------------------------------------------
+# Default Landing Page
+# ---------------------------------------------------------
 else:
     st.title("BG BioWrite Scientific — AI Consulting & Research Suite")
     st.write(
