@@ -148,3 +148,10 @@ if module == "Fusion Data Dashboard":
         # Fusion preview
         st.write("### Early Fusion Preview")
         fused = pd.concat([expr, img], axis=1)
+        st.dataframe(fused.head())
+
+        # Correlation heatmap
+        st.write("### Fusion Correlation Matrix")
+        fig, ax = plt.subplots(figsize=(10,6))
+        sns.heatmap(fused.corr(), cmap="coolwarm", ax=ax)
+        st.pyplot(fig)
