@@ -1,39 +1,70 @@
-# BG BioWrite Scientific — AI Consulting & Research Suite
+# SciProAI Platform — Unified Research & Business AI Ecosystem
 
 Live Interactive App:  
 https://bg-biowrite-scientific.streamlit.app/
 
-The **BG BioWrite Scientific AI Consulting & Research Suite** is a unified Streamlit application designed to support laboratory operations, regulatory documentation, molecular assay optimization, multimodal biofilm research, and scientific document interpretation.
+The **SciProAI Platform** is a unified Streamlit application designed to support scientific research, laboratory operations, regulatory documentation, molecular assay development, multimodal biofilm modeling, and AI‑enhanced business workflows.
 
-This suite provides an integrated professional environment for generating SOPs, building validation plans, optimizing ddPCR/qPCR workflows, exploring multimodal biofilm datasets, and evaluating AI/LLM biological reasoning for scientific teams.
+SciProAI integrates **12 specialized AI Suites** across scientific and business domains, providing a complete environment for research teams, diagnostic laboratories, and scientific consulting operations.
 
 ---
 
-## 🧬 Suite Structure
+# 🧬 Platform Architecture
 
-The application is divided into two main sections:
+SciProAI Platform is organized into two major sections:
 
-### 🧪 Business Suite — BG BioWrite Scientific
-Consulting‑oriented tools for:
-- SOP creation  
-- Validation plans  
-- QA/QC documentation  
-- Competency & training  
-- AI/LLM reasoning evaluation  
-- Business document summarization  
-- **Business AI Agent (coming soon)**  
+---
 
-### 🔬 Research Suite — BiofilmAI
-Scientific tools for:
+## 🔬 Research AI Suites (5)
+
+Advanced scientific tools for modeling, diagnostics, visualization, biocontrol, and assay design.
+
+### **1. BiofilmAI — Multimodal Biofilm Modeling Suite**
+Tools for:
 - Gene expression analysis  
 - Microscopy image processing  
 - Multimodal fusion  
-- ddPCR/qPCR optimization  
 - Research document summarization  
-- SOP/protocol summarization  
-- **Research AI Agent (coming soon)**  
+
+### **2. BiofilmNN — AI Diagnostics Suite**
+Tools for:
+- Microbial imaging diagnostics  
+- AMR prediction (AMRAI Module)  
+- Diagnostic workflows  
+
+### **3. BiofilmAI Dashboards — Interactive Visualization Suite**
+Tools for:
+- MicrobiomeAI visualization  
+- Biofilm behavior dashboards  
+- Fusion data exploration  
+
+### **4. BiofilmAI Biocontrol — Inhibition Modeling Suite**
+Tools for:
+- Biofilm inhibition prediction  
+- Compound/surface interaction modeling  
+- Biocontrol strategy evaluation  
+
+### **5. AssayAI — Molecular Assay Design Suite**
+Tools for:
+- ddPCR/qPCR optimization  
+- PCRoptAI — Assay Module  
+- Assay modeling and comparison  
 
 ---
 
-## 📁 Folder Structure (Sidebar Grouping)
+## 🧪 Business AI Suites (7)
+
+Professional laboratory and consulting tools for documentation, compliance, training, and reasoning evaluation.
+
+### **SOPAI — SOP & Protocol Builder**
+### **ValidateAI — Validation Plan Generator**
+### **QCAI — Quality & Compliance Suite**
+### **TrainAI — Competency & Training Suite**
+### **ReasonAI — AI/LLM Reasoning Evaluator**
+### **BizDocAI — Business Document Summarization**
+### **BizAgentAI — Business AI Agent (coming soon)**
+
+---
+
+# 📁 Folder Structure (Sidebar Grouping)
 
