@@ -1,53 +1,121 @@
-BiofilmAI Lab Suite
-Live Interactive App:
-https://lab-ai-compliance-suite-icr9e9zehffzgw8qj4fdb2.streamlit.app/
+# BG BioWrite Scientific — AI Consulting Suite
 
-The BiofilmAI Lab Suite is a unified Streamlit application designed to support multimodal prediction of biofilm formation using gene expression data, microscopy features, and structured scientific documentation.
-This suite provides an integrated scientific environment for exploring transcriptomic patterns, analyzing biofilm images, previewing multimodal fusion, and working with research‑related documents.
+Live Interactive App:  
+https://bg-biowrite-scientific.streamlit.app/
 
-Included Modules
-1. Gene Expression Checker
-Supports Project A of BiofilmAI by allowing users to upload gene expression tables and preview:
-required columns (gene, logFC, p‑value, adj p‑value)
-summary statistics
-significantly up/down‑regulated genes
-volcano plot previews
-exportable feature tables for ML modeling
+The **BG BioWrite Scientific AI Consulting Suite** is a unified Streamlit application designed to support laboratory operations, regulatory documentation, molecular assay optimization, and quality system development for CLIA‑aligned and research laboratories.
 
-2. Biofilm Image Analyzer
-Supports Project B by processing fluorescence and brightfield microscopy images:
-denoising and normalization
-channel separation
-watershed segmentation previews
-biomass and cell‑count estimation
-live/dead ratio estimation
-exportable image‑derived feature tables
+This suite provides an integrated professional environment for generating SOPs, building validation plans, optimizing ddPCR/qPCR workflows, creating competency materials, and evaluating AI/LLM biological reasoning for scientific teams.
 
-3. Multimodal Fusion Hub
-Supports Project C by previewing how gene expression and microscopy features combine:
-upload gene‑derived feature tables
-upload image‑derived feature tables
-feature alignment and normalization
-combined feature vector visualization
-early‑stage multimodal model previews
-export unified multimodal datasets
+---
 
-4. SOP & Protocol Summary Assistant
-Summarizes procedural scientific documents such as SOPs, JoVE protocols, and step‑by‑step experimental workflows.
-This module extracts the core components of a procedure — including purpose, materials, equipment, steps, conditions, safety, and expected results — and presents them as a structured overview.
-It helps researchers quickly understand what the SOP contains, what the experiment is about, and how the workflow is organized, without performing any completeness or compliance checks.
+## 🧬 About BG BioWrite Scientific
 
-5. Scientific Document Summarization Module
-Summarizes scientific documents — including methods, workflows, technical notes, and publications — to extract the main purpose, experimental context, and key scientific content.
-This module provides a concise overview of what the document contains and what the study or experiment is about, supporting rapid scientific interpretation without performing structural or completeness analysis.
+**BG BioWrite Scientific, LLC** provides professional consulting services including:
 
-Quick Features
-Modular multipage Streamlit architecture
-Real‑time microscopy segmentation previews
-Transcriptomic feature exploration
-Multimodal dataset construction
-SOP/protocol summarization
-Scientific document summarization
-Requirements
-The BiofilmAI Lab Suite uses a simplified, unpinned environment for compatibility and reproducibility.
-Your requirements.txt should contain:
+- Scientific writing and regulatory‑aligned documentation  
+- SOP development, validation plans, QA/QC records  
+- ddPCR/qPCR assay optimization and troubleshooting  
+- Workflow refinement for sensitivity and reproducibility  
+- Biosafety and competency training programs  
+- Quality system development for CLIA and ISO‑aligned labs  
+- AI/LLM biological reasoning evaluation and structured training content  
+
+This application supports these services through automated tools and intelligent workflows.
+
+---
+
+## 🧪 Included Modules
+
+### **1. SOP & Protocol Builder**
+Generates structured, regulatory‑aligned SOPs and workflow documents including:
+- Purpose  
+- Materials  
+- Equipment  
+- Stepwise procedures  
+- Acceptance criteria  
+- Safety considerations  
+- QC checkpoints  
+
+Supports CLIA, ISO, and research laboratory documentation needs.
+
+---
+
+### **2. Validation Plan Generator**
+Creates validation plans for molecular assays including:
+- Accuracy  
+- Precision  
+- Sensitivity  
+- Specificity  
+- Reportable range  
+- Reference intervals  
+- Acceptance criteria  
+
+Designed for ddPCR, qPCR, and other molecular workflows.
+
+---
+
+### **3. QA/QC Record Assistant**
+Builds quality system documents such as:
+- QC logs  
+- Instrument maintenance records  
+- Reagent tracking sheets  
+- Deviation reports  
+- Corrective action summaries  
+
+Supports laboratory reproducibility and compliance.
+
+---
+
+### **4. ddPCR/qPCR Optimization Assistant**
+Provides structured guidance for improving molecular assay performance:
+- Troubleshooting  
+- Sensitivity improvements  
+- Reproducibility enhancements  
+- Workflow refinement  
+- Template quality evaluation  
+- Primer/probe considerations  
+
+---
+
+### **5. Competency & Training Module**
+Generates training materials and competency assessments for:
+- Molecular methods  
+- Biosafety  
+- QC systems  
+- Documentation standards  
+- Workflow proficiency  
+
+Supports onboarding and continuing education.
+
+---
+
+### **6. AI/LLM Biological Reasoning Evaluator**
+Evaluates biological reasoning quality in AI/LLM workflows:
+- Consistency  
+- Domain alignment  
+- Accuracy  
+- Safety  
+- Interpretability  
+
+Supports clients adopting AI tools in laboratory environments.
+
+---
+
+## ⚙️ Quick Features
+- Modular multipage Streamlit architecture  
+- Automated SOP and validation plan generation  
+- ddPCR/qPCR optimization workflows  
+- CLIA‑aligned documentation templates  
+- Competency and training content creation  
+- AI/LLM reasoning evaluation tools  
+- Business AI Agent integration  
+
+---
+
+## 📦 Requirements
+
+The BG BioWrite Scientific Suite uses a simplified, unpinned environment for compatibility and reproducibility.
+
+Your `requirements.txt` should contain:
+
