@@ -50,32 +50,44 @@ choice = st.sidebar.radio(
 )
 
 # ---------------------------------------------------------
-# Routing Logic
+# Routing Logic (NO .main() calls)
 # ---------------------------------------------------------
 if choice == "🏢 SOPAI":
-    sopai.main()
+    import modules.sopai
+
 elif choice == "🏢 ValidateAI":
-    validateai.main()
+    import modules.validateai
+
 elif choice == "🏢 QCAI":
-    qcai.main()
+    import modules.qcai
+
 elif choice == "🏢 TrainAI":
-    trainai.main()
+    import modules.trainai
+
 elif choice == "🏢 ReasonAI":
-    reasonai.main()
+    import modules.reasonai
+
 elif choice == "🏢 BizDocAI":
-    bizdocai.main()
+    import modules.bizdocai
+
 elif choice == "🏢 BizAgentAI":
-    bizagentai.main()
+    import modules.bizagentai
+
 elif choice == "🔬 BiofilmAI Multimodal":
-    biofilmai_multimodal.main()
+    import modules.biofilmai_multimodal
+
 elif choice == "🔬 BiofilmNN Diagnostics":
-    biofilmnn_diagnostics.main()
+    import modules.biofilmnn_diagnostics
+
 elif choice == "🔬 Dashboards Visualization":
-    dashboards_visualization.main()
+    import modules.dashboards_visualization
+
 elif choice == "🔬 Biocontrol Inhibition":
-    biocontrol_inhibition.main()
+    import modules.biocontrol_inhibition
+
 elif choice == "🔬 AssayAI Design":
-    assayai_design.main()
+    import modules.assayai_design
+
 else:
     st.title("BG BioWrite Scientific — AI Consulting & Research Suite")
     st.write(
