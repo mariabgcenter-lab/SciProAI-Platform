@@ -78,4 +78,60 @@ if module == "Accuracy / Precision Tables":
 
         if numeric_cols:
             st.write("### Summary Statistics")
-            st.dataframe(df[numeric_cols].describe
+            st.dataframe(df[numeric_cols].describe())
+
+# ---------------------------------------------------------
+# MODULE 3 — LoD / LoQ Calculator
+# ---------------------------------------------------------
+if module == "LoD / LoQ Calculator":
+    st.subheader("📉 LoD / LoQ Calculator")
+
+    st.write("Enter replicate measurements for blank and low‑positive samples.")
+
+    blank_vals = st.text_area("Blank replicates (comma‑separated):")
+    low_pos_vals = st.text_area("Low‑positive replicates (comma‑separated):")
+
+    if st.button("Calculate LoD / LoQ"):
+        try:
+            blank = [float(x) for x in blank_vals.split(",") if x.strip()]
+            lowpos = [float(x) for x in low_pos_vals.split(",") if x.strip()]
+
+            if len(blank) < 3 or len(lowpos) < 3:
+                st.warning("Please enter at least 3 replicates for each group.")
+            else:
+                import numpy as np
+
+                lod = np.mean(blank) + 3 * np.std(blank)
+                loq = np.mean(blank) + 10 * np.std(blank)
+
+                st.write("### Results")
+                st.write(f"**LoD:** {lod:.4f}")
+                st.write(f"**LoQ:** {loq:.4f}")
+
+        except Exception as e:
+            st.error(f"Error calculating LoD/LoQ: {e}")
+
+# ---------------------------------------------------------
+# MODULE 4 — Method Comparison Summary
+# ---------------------------------------------------------
+if module == "Method Comparison Summary":
+    st.subheader("📈 Method Comparison Summary")
+
+    uploaded = st.file_uploader("Upload method comparison dataset (CSV)", type=["csv"])
+
+    if uploaded:
+        df = pd.read_csv(uploaded)
+        st.write("### Dataset Preview")
+        st.dataframe(df.head())
+
+        if "new_method" in df.columns and "reference_method" in df.columns:
+            st.write("### Correlation")
+            corr = df["new_method"].corr(df["reference_method"])
+            st.write(f"**Correlation (r):** {corr:.4f}")
+
+            st.write("### Difference (New - Reference)")
+            df["difference"] = df["new_method"] - df["reference_method"]
+            st.dataframe(df[["new_method", "reference_method", "difference"]])
+
+        else:
+            st.warning("Dataset must contain 'new_method' and 'reference_method' columns.")
