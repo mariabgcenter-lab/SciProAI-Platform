@@ -20,32 +20,27 @@ SciProAI Platform is organized into two major sections:
 Advanced scientific tools for modeling, diagnostics, visualization, biocontrol, and assay design.
 
 ### 1. BiofilmAI — Multimodal Biofilm Modeling Suite
-Tools for:
 - Gene expression analysis  
 - Microscopy image processing  
 - Multimodal fusion  
 - Research document summarization  
 
 ### 2. BiofilmNN — AI Diagnostics Suite
-Tools for:
 - Microbial imaging diagnostics  
 - AMR prediction (AMRAI Module)  
 - Diagnostic workflows  
 
 ### 3. BiofilmAI Dashboards — Interactive Visualization Suite
-Tools for:
 - MicrobiomeAI visualization  
 - Biofilm behavior dashboards  
 - Fusion data exploration  
 
 ### 4. BiofilmAI Biocontrol — Inhibition Modeling Suite
-Tools for:
 - Biofilm inhibition prediction  
 - Compound/surface interaction modeling  
 - Biocontrol strategy evaluation  
 
 ### 5. AssayAI — Molecular Assay Design Suite
-Tools for:
 - ddPCR/qPCR optimization  
 - PCRoptAI — Assay Module  
 - Assay modeling and comparison  
@@ -56,15 +51,17 @@ Tools for:
 
 Professional laboratory and consulting tools for documentation, compliance, training, and reasoning evaluation.
 
-### SOPAI — SOP & Protocol Builder
-### ValidateAI — Validation Plan Generator
-### QCAI — Quality & Compliance Suite
-### TrainAI — Competency & Training Suite
-### ReasonAI — AI/LLM Reasoning Evaluator
-### BizDocAI — Business Document Summarization
-### BizAgentAI — Business AI Agent
+### SOPAI — SOP & Protocol Builder  
+### ValidateAI — Validation Plan Generator  
+### QCAI — Quality & Compliance Suite  
+### TrainAI — Competency & Training Suite  
+### ReasonAI — AI/LLM Reasoning Evaluator  
+### BizDocAI — Business Document Summarization  
+### BizAgentAI — Business AI Agent  
 
 ---
 
-# 📁 Folder Structure (Sidebar Grouping)
+# 📁 Folder Structure (Modules‑Only Architecture)
 
+All application modules now live inside the `modules/` directory.  
+The `pages/` folder is no longer used, ensuring a clean layout with sidebar‑only navigation
