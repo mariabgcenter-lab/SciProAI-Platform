@@ -5,14 +5,14 @@ import pandas as pd
 # PAGE CONFIGURATION
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="TrainAI — Competency & Training Module",
+    page_title="TrainAI — Staff Training & Competency Suite",
     layout="wide"
 )
 
-st.title("🎓 TrainAI — Competency & Training Module")
+st.title("🎓 TrainAI — Staff Training & Competency Suite")
 st.write("""
-Create and manage **competency assessments**, training records,  
-skills matrices, and qualification documentation for laboratory staff.
+Create, track, and evaluate **laboratory training**, **competency assessments**,  
+and **staff qualification records** for CLIA, ISO, CAP, and research environments.
 """)
 
 # ---------------------------------------------------------
@@ -22,81 +22,76 @@ st.sidebar.header("TrainAI Modules")
 module = st.sidebar.radio(
     "Select a module:",
     [
-        "Competency Checklist Builder",
-        "Training Record Generator",
-        "Skills Matrix Explorer"
+        "Training Record Builder",
+        "Competency Assessment Designer",
+        "Training Table Explorer"
     ]
 )
 
 # ---------------------------------------------------------
-# MODULE 1 — Competency Checklist Builder
+# MODULE 1 — Training Record Builder
 # ---------------------------------------------------------
-if module == "Competency Checklist Builder":
-    st.subheader("📋 Competency Checklist Builder")
+if module == "Training Record Builder":
+    st.subheader("📝 Training Record Builder")
 
+    staff_name = st.text_input("Staff Name:")
     role = st.text_input("Role / Position:")
-    assessor = st.text_input("Assessor Name:")
-    date_assessed = st.date_input("Assessment Date:")
+    training_title = st.text_input("Training Title:")
+    trainer = st.text_input("Trainer:")
+    date_completed = st.date_input("Date Completed:")
+    notes = st.text_area("Training Notes / Summary:")
 
-    st.write("### Add Competency Items")
+    if st.button("Generate Training Record"):
+        if not staff_name.strip() or not training_title.strip():
+            st.warning("Please enter at least Staff Name and Training Title.")
+        else:
+            st.markdown("### Training Record Summary")
+            st.write(f"**Staff Name:** {staff_name}")
+            st.write(f"**Role:** {role}")
+            st.write(f"**Training Title:** {training_title}")
+            st.write(f"**Trainer:** {trainer}")
+            st.write(f"**Date Completed:** {date_completed}")
+            st.write(f"**Notes:**\n{notes}")
+
+# ---------------------------------------------------------
+# MODULE 2 — Competency Assessment Designer
+# ---------------------------------------------------------
+if module == "Competency Assessment Designer":
+    st.subheader("📊 Competency Assessment Designer")
+
+    st.write("Create structured competency assessments for laboratory staff.")
+
+    assessment_title = st.text_input("Assessment Title:")
     num_items = st.number_input("Number of competency items", min_value=1, max_value=50, value=5)
 
     items = []
     for i in range(int(num_items)):
-        item = st.text_input(f"Competency Item {i+1}:", key=f"item_{i}")
+        item = st.text_input(f"Competency Item {i+1}:", key=f"comp_item_{i}")
         items.append(item)
 
-    if st.button("Generate Competency Checklist"):
-        if not role:
-            st.warning("Please enter a role or position.")
+    if st.button("Generate Competency Assessment"):
+        if not assessment_title.strip():
+            st.warning("Please enter an assessment title.")
         else:
-            st.markdown("### Competency Checklist Summary")
-            st.write(f"**Role:** {role}")
-            st.write(f"**Assessor:** {assessor}")
-            st.write(f"**Assessment Date:** {date_assessed}")
-
-            st.write("### Competency Items")
+            st.markdown("### Competency Assessment")
+            st.write(f"**Assessment Title:** {assessment_title}")
+            st.write("### Items")
             for i, item in enumerate(items, start=1):
                 if item.strip():
-                    st.write(f"- {item}")
+                    st.write(f"- Item {i}: {item}")
 
 # ---------------------------------------------------------
-# MODULE 2 — Training Record Generator
+# MODULE 3 — Training Table Explorer
 # ---------------------------------------------------------
-if module == "Training Record Generator":
-    st.subheader("📝 Training Record Generator")
+if module == "Training Table Explorer":
+    st.subheader("📋 Training Table Explorer")
 
-    trainee = st.text_input("Trainee Name:")
-    trainer = st.text_input("Trainer Name:")
-    training_topic = st.text_input("Training Topic:")
-    training_date = st.date_input("Training Date:")
-    training_notes = st.text_area("Training Notes:")
-    competency_result = st.selectbox("Competency Result:", ["Pass", "Fail", "Needs Review"])
-
-    if st.button("Generate Training Record"):
-        if not trainee or not trainer:
-            st.warning("Please enter trainee and trainer names.")
-        else:
-            st.markdown("### Training Record Summary")
-            st.write(f"**Trainee:** {trainee}")
-            st.write(f"**Trainer:** {trainer}")
-            st.write(f"**Topic:** {training_topic}")
-            st.write(f"**Date:** {training_date}")
-            st.write(f"**Notes:** {training_notes}")
-            st.write(f"**Competency Result:** {competency_result}")
-
-# ---------------------------------------------------------
-# MODULE 3 — Skills Matrix Explorer
-# ---------------------------------------------------------
-if module == "Skills Matrix Explorer":
-    st.subheader("📊 Skills Matrix Explorer")
-
-    uploaded = st.file_uploader("Upload skills matrix (CSV)", type=["csv"])
+    uploaded = st.file_uploader("Upload training table (CSV)", type=["csv"])
 
     if uploaded:
         df = pd.read_csv(uploaded)
-        st.write("### Skills Matrix Preview")
+        st.write("### Training Table Preview")
         st.dataframe(df.head())
 
-        st.write("### Staff Skills Summary")
-        st.dataframe(df.describe(include="all"))
+        st.write("### Column Types")
+        st.json({col: str(df[col].dtype) for col in df.columns})
