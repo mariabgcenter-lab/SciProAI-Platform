@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # ---------------------------------------------------------
 # PAGE CONFIGURATION
@@ -10,8 +11,8 @@ st.set_page_config(
 
 st.title("📄 BizDocAI — Business Document Summary")
 st.write("""
-Summarize SOPs, validation plans, QC records, competency documents,  
-and regulatory materials for CLIA, CAP, and ISO 17025 operations.
+Summarize **SOPs**, **validation plans**, **QC records**, **training documents**,  
+and other business or laboratory materials into structured summaries.
 """)
 
 # ---------------------------------------------------------
@@ -21,50 +22,72 @@ st.sidebar.header("BizDocAI Modules")
 module = st.sidebar.radio(
     "Select a module:",
     [
-        "Document Summarizer",
-        "Key Points Extractor",
-        "Regulatory Alignment Checker"
+        "Document Summary",
+        "Document Table Explorer",
+        "Structured Section Extractor"
     ]
 )
 
 # ---------------------------------------------------------
-# MODULE 1 — Document Summarizer
+# MODULE 1 — Document Summary
 # ---------------------------------------------------------
-if module == "Document Summarizer":
-    st.subheader("📝 Document Summarizer")
+if module == "Document Summary":
+    st.subheader("📝 Document Summary")
 
-    uploaded = st.file_uploader("Upload document (TXT, DOCX, PDF)", type=["txt", "docx", "pdf"])
+    uploaded = st.file_uploader("Upload document (TXT, CSV, or DOCX converted to text)", type=["txt", "csv"])
 
     if uploaded:
-        st.write("### Document Uploaded")
-        st.write("Processing and summarizing...")
+        try:
+            if uploaded.name.endswith(".csv"):
+                df = pd.read_csv(uploaded)
+                text = "\n".join(df.astype(str).values.flatten())
+            else:
+                text = uploaded.read().decode("utf-8")
 
-        # Placeholder summary
-        st.markdown("### Summary")
-        st.write("This is a placeholder summary. Add your NLP model here.")
+            st.write("### Raw Document Preview")
+            st.write(text[:500] + "..." if len(text) > 500 else text)
 
-# ---------------------------------------------------------
-# MODULE 2 — Key Points Extractor
-# ---------------------------------------------------------
-if module == "Key Points Extractor":
-    st.subheader("📌 Key Points Extractor")
+            if st.button("Generate Summary"):
+                st.write("### Summary")
+                st.write(text[:300] + "...")
 
-    text = st.text_area("Paste document text:")
-
-    if st.button("Extract Key Points"):
-        st.write("### Key Points")
-        st.write("- Placeholder key point 1")
-        st.write("- Placeholder key point 2")
-        st.write("- Placeholder key point 3")
+        except Exception as e:
+            st.error(f"Error reading file: {e}")
 
 # ---------------------------------------------------------
-# MODULE 3 — Regulatory Alignment Checker
+# MODULE 2 — Document Table Explorer
 # ---------------------------------------------------------
-if module == "Regulatory Alignment Checker":
-    st.subheader("📚 Regulatory Alignment Checker")
+if module == "Document Table Explorer":
+    st.subheader("📋 Document Table Explorer")
 
-    text = st.text_area("Paste SOP or validation text:")
+    uploaded = st.file_uploader("Upload table (CSV)", type=["csv"])
 
-    if st.button("Check Alignment"):
-        st.write("### Alignment Report")
-        st.write("This is a placeholder alignment report. Add rule-based checks here.")
+    if uploaded:
+        df = pd.read_csv(uploaded)
+        st.write("### Table Preview")
+        st.dataframe(df.head())
+
+        st.write("### Column Summary")
+        st.json({col: str(df[col].dtype) for col in df.columns})
+
+# ---------------------------------------------------------
+# MODULE 3 — Structured Section Extractor
+# ---------------------------------------------------------
+if module == "Structured Section Extractor":
+    st.subheader("📑 Structured Section Extractor")
+
+    text = st.text_area("Paste SOP, validation plan, QC record, or training document text:")
+
+    if st.button("Extract Sections"):
+        if len(text.strip()) == 0:
+            st.warning("Please paste text first.")
+        else:
+            st.write("### Extracted Sections (Illustrative)")
+            st.write("**Scope:**")
+            st.write(text[:150] + "...")
+
+            st.write("**Procedure:**")
+            st.write(text[150:300] + "...")
+
+            st.write("**Quality Control:**")
+            st.write(text[300:450] + "...")
