@@ -64,4 +64,5 @@ Professional laboratory and consulting tools for documentation, compliance, trai
 # 📁 Folder Structure (Modules‑Only Architecture)
 
 All application modules now live inside the `modules/` directory.  
-The `pages/` folder is no longer used, ensuring a clean layout with sidebar‑only navigation
+The `pages/` folder is no longer used, ensuring a clean layout with sidebar‑only navigation and no auto‑generated Streamlit menu.
+
