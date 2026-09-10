@@ -10,26 +10,26 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# Sidebar Navigation (Classic Streamlit — Cloud Compatible)
+# Sidebar Navigation (Corrected paths)
 # ---------------------------------------------------------
 
 st.sidebar.title("🏢 Business Suite")
 
-st.sidebar.page_link("pages/1_1_sopai.py", label="SOPAI")
-st.sidebar.page_link("pages/1_2_validateai.py", label="ValidateAI")
-st.sidebar.page_link("pages/1_3_qcai.py", label="QCAI")
-st.sidebar.page_link("pages/1_4_trainai.py", label="TrainAI")
-st.sidebar.page_link("pages/1_5_reasonai.py", label="ReasonAI")
-st.sidebar.page_link("pages/1_6_bizdocai.py", label="BizDocAI")
-st.sidebar.page_link("pages/1_7_bizagentai.py", label="BizAgentAI")
+st.sidebar.page_link("pages/sopai.py", label="SOPAI")
+st.sidebar.page_link("pages/validateai.py", label="ValidateAI")
+st.sidebar.page_link("pages/qcai.py", label="QCAI")
+st.sidebar.page_link("pages/trainai.py", label="TrainAI")
+st.sidebar.page_link("pages/reasonai.py", label="ReasonAI")
+st.sidebar.page_link("pages/bizdocai.py", label="BizDocAI")
+st.sidebar.page_link("pages/bizagentai.py", label="BizAgentAI")
 
 st.sidebar.title("🔬 Research Suite")
 
-st.sidebar.page_link("pages/2_1_biofilmai_multimodal.py", label="BiofilmAI Multimodal")
-st.sidebar.page_link("pages/2_2_biofilmnn_diagnostics.py", label="BiofilmNN Diagnostics")
-st.sidebar.page_link("pages/2_3_dashboards_visualization.py", label="Dashboards Visualization")
-st.sidebar.page_link("pages/2_4_biocontrol_inhibition.py", label="Biocontrol Inhibition")
-st.sidebar.page_link("pages/2_5_assayai_design.py", label="AssayAI Design")
+st.sidebar.page_link("pages/biofilmai_multimodal.py", label="BiofilmAI Multimodal")
+st.sidebar.page_link("pages/biofilmnn_diagnostics.py", label="BiofilmNN Diagnostics")
+st.sidebar.page_link("pages/dashboards_visualization.py", label="Dashboards Visualization")
+st.sidebar.page_link("pages/biocontrol_inhibition.py", label="Biocontrol Inhibition")
+st.sidebar.page_link("pages/assayai_design.py", label="AssayAI Design")
 
 # ---------------------------------------------------------
 # Home Page Content
