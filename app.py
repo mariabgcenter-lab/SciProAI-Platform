@@ -34,6 +34,8 @@ Focused on consulting, documentation, training, and AI‑supported quality syste
 
 ### 🔬 Research Suite — BiofilmAI
 Focused on multimodal biofilm prediction, molecular assay optimization, and scientific document support.
+
+Both suites will soon include dedicated AI Agents to automate scientific and operational workflows.
 """)
 
 st.markdown("---")
@@ -43,5 +45,5 @@ st.markdown("---")
 # ---------------------------------------------------------
 st.write(
     "Use the navigation menu on the left to open the **Business Suite** or **Research Suite**, "
-    "and then select individual modules."
+    "and then select individual modules — including the upcoming AI Agents."
 )
