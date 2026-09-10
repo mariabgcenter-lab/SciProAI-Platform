@@ -5,14 +5,14 @@ import pandas as pd
 # PAGE CONFIGURATION
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="QCAI — QA/QC Assistant",
+    page_title="QCAI — Quality Control & Audit Suite",
     layout="wide"
 )
 
-st.title("🧪 QCAI — QA/QC Assistant")
+st.title("✅ QCAI — Quality Control & Audit Suite")
 st.write("""
-Create and manage **QA/QC records**, acceptance criteria,  
-deviation logs, and quality summaries for laboratory workflows.
+Design, review, and explore **QC records**, **audit trails**, and **quality metrics**  
+for CLIA, ISO, CAP, and research laboratory environments.
 """)
 
 # ---------------------------------------------------------
@@ -24,7 +24,7 @@ module = st.sidebar.radio(
     [
         "QC Record Builder",
         "QC Table Explorer",
-        "Deviation & Corrective Action Log"
+        "Audit Trail Preview"
     ]
 )
 
@@ -32,73 +32,62 @@ module = st.sidebar.radio(
 # MODULE 1 — QC Record Builder
 # ---------------------------------------------------------
 if module == "QC Record Builder":
-    st.subheader("📋 QC Record Builder")
+    st.subheader("🧾 QC Record Builder")
 
-    qc_title = st.text_input("QC Record Title:")
-    qc_id = st.text_input("QC ID / Code:")
-    qc_material = st.text_input("Material / Sample:")
-    qc_method = st.text_input("Method / Assay:")
-    qc_acceptance = st.text_area("Acceptance Criteria:")
-    qc_results = st.text_area("QC Results:")
-    qc_interpretation = st.text_area("Interpretation:")
-    qc_reviewer = st.text_input("Reviewer Name:")
-    qc_date = st.date_input("Review Date:")
+    qc_id = st.text_input("QC Record ID:")
+    assay_name = st.text_input("Assay / Method Name:")
+    lot_number = st.text_input("Reagent / Kit Lot Number:")
+    run_date = st.date_input("Run Date:")
+    operator = st.text_input("Operator:")
+    controls = st.text_area("Controls Used (positive, negative, internal):")
+    results = st.text_area("QC Results / Observations:")
+    actions = st.text_area("Corrective / Preventive Actions:")
 
-    if st.button("Generate QC Record"):
-        if not qc_title or not qc_id:
-            st.warning("Please enter QC Title and QC ID.")
+    if st.button("Generate QC Record Summary"):
+        if not qc_id.strip() or not assay_name.strip():
+            st.warning("Please enter at least QC Record ID and Assay Name.")
         else:
             st.markdown("### QC Record Summary")
-            st.write(f"**Title:** {qc_title}")
-            st.write(f"**QC ID:** {qc_id}")
-            st.write(f"**Material / Sample:** {qc_material}")
-            st.write(f"**Method / Assay:** {qc_method}")
-            st.write(f"**Acceptance Criteria:** {qc_acceptance}")
-            st.write(f"**Results:** {qc_results}")
-            st.write(f"**Interpretation:** {qc_interpretation}")
-            st.write(f"**Reviewer:** {qc_reviewer}")
-            st.write(f"**Review Date:** {qc_date}")
+            st.write(f"**QC Record ID:** {qc_id}")
+            st.write(f"**Assay / Method:** {assay_name}")
+            st.write(f"**Lot Number:** {lot_number}")
+            st.write(f"**Run Date:** {run_date}")
+            st.write(f"**Operator:** {operator}")
+            st.write(f"**Controls:**\n{controls}")
+            st.write(f"**Results / Observations:**\n{results}")
+            st.write(f"**Corrective / Preventive Actions:**\n{actions}")
 
 # ---------------------------------------------------------
 # MODULE 2 — QC Table Explorer
 # ---------------------------------------------------------
 if module == "QC Table Explorer":
-    st.subheader("📊 QC Table Explorer")
+    st.subheader("📋 QC Table Explorer")
 
-    uploaded = st.file_uploader("Upload QC dataset (CSV)", type=["csv"])
+    uploaded = st.file_uploader("Upload QC table (CSV)", type=["csv"])
 
     if uploaded:
         df = pd.read_csv(uploaded)
         st.write("### QC Table Preview")
         st.dataframe(df.head())
 
-        numeric_cols = df.select_dtypes(include=["float", "int"]).columns.tolist()
-
-        if numeric_cols:
-            st.write("### Summary Statistics")
-            st.dataframe(df[numeric_cols].describe())
+        st.write("### Column Types")
+        st.json({col: str(df[col].dtype) for col in df.columns})
 
 # ---------------------------------------------------------
-# MODULE 3 — Deviation & Corrective Action Log
+# MODULE 3 — Audit Trail Preview
 # ---------------------------------------------------------
-if module == "Deviation & Corrective Action Log":
-    st.subheader("⚠️ Deviation & Corrective Action Log")
+if module == "Audit Trail Preview":
+    st.subheader("🧾 Audit Trail Preview")
 
-    deviation_desc = st.text_area("Describe the deviation:")
-    root_cause = st.text_area("Root cause analysis:")
-    corrective_action = st.text_area("Corrective action:")
-    preventive_action = st.text_area("Preventive action:")
-    responsible_person = st.text_input("Responsible person:")
-    date_logged = st.date_input("Date logged:")
+    uploaded = st.file_uploader("Upload audit trail (CSV)", type=["csv"])
 
-    if st.button("Generate Deviation Log"):
-        if not deviation_desc.strip():
-            st.warning("Please describe the deviation.")
+    if uploaded:
+        df = pd.read_csv(uploaded)
+        st.write("### Audit Trail Preview")
+        st.dataframe(df.head())
+
+        if {"timestamp", "user", "action"} <= set(df.columns):
+            st.write("### Recent Actions")
+            st.dataframe(df.sort_values("timestamp", ascending=False).head(20))
         else:
-            st.markdown("### Deviation Log Summary")
-            st.write(f"**Deviation:** {deviation_desc}")
-            st.write(f"**Root Cause:** {root_cause}")
-            st.write(f"**Corrective Action:** {corrective_action}")
-            st.write(f"**Preventive Action:** {preventive_action}")
-            st.write(f"**Responsible Person:** {responsible_person}")
-            st.write(f"**Date Logged:** {date_logged}")
+            st.warning("Expected columns not found: timestamp, user, action")
