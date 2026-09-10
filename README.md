@@ -1,11 +1,11 @@
-# BG BioWrite Scientific — AI Consulting Suite
+# BG BioWrite Scientific — AI Consulting & Research Suite
 
 Live Interactive App:  
 https://bg-biowrite-scientific.streamlit.app/
 
-The **BG BioWrite Scientific AI Consulting Suite** is a unified Streamlit application designed to support laboratory operations, regulatory documentation, molecular assay optimization, and quality system development for CLIA‑aligned and research laboratories.
+The **BG BioWrite Scientific AI Consulting & Research Suite** is a unified Streamlit application designed to support laboratory operations, regulatory documentation, molecular assay optimization, multimodal biofilm research, and scientific document interpretation.
 
-This suite provides an integrated professional environment for generating SOPs, building validation plans, optimizing ddPCR/qPCR workflows, creating competency materials, and evaluating AI/LLM biological reasoning for scientific teams.
+This suite provides an integrated professional environment for generating SOPs, building validation plans, optimizing ddPCR/qPCR workflows, exploring multimodal biofilm datasets, and evaluating AI/LLM biological reasoning for scientific teams.
 
 ---
 
@@ -15,90 +15,63 @@ This suite provides an integrated professional environment for generating SOPs, 
 
 - Scientific writing and regulatory‑aligned documentation  
 - SOP development, validation plans, QA/QC records  
-- ddPCR/qPCR assay optimization and troubleshooting  
 - Workflow refinement for sensitivity and reproducibility  
 - Biosafety and competency training programs  
 - Quality system development for CLIA and ISO‑aligned labs  
-- AI/LLM biological reasoning evaluation and structured training content  
+- AI/LLM biological reasoning evaluation  
+- Scientific support for multimodal biofilm research  
 
 This application supports these services through automated tools and intelligent workflows.
 
 ---
 
-## 🧪 Included Modules
+# 🧪 Business Suite — BG BioWrite Scientific
 
-### **1. SOP & Protocol Builder**
-Generates structured, regulatory‑aligned SOPs and workflow documents including:
-- Purpose  
-- Materials  
-- Equipment  
-- Stepwise procedures  
-- Acceptance criteria  
-- Safety considerations  
-- QC checkpoints  
+The Business Suite provides consulting‑oriented tools for SOPs, validation plans, QA/QC records, competency development, and AI/LLM reasoning evaluation.
 
-Supports CLIA, ISO, and research laboratory documentation needs.
+### **Included Business Modules**
+- **SOP & Protocol Builder**  
+  Generate structured, regulatory‑aligned SOPs and workflow documents.
 
----
+- **Validation Plan Generator**  
+  Build CLIA‑aligned validation plans for molecular assays.
 
-### **2. Validation Plan Generator**
-Creates validation plans for molecular assays including:
-- Accuracy  
-- Precision  
-- Sensitivity  
-- Specificity  
-- Reportable range  
-- Reference intervals  
-- Acceptance criteria  
+- **QA/QC Record Assistant**  
+  Create logs, maintenance records, reagent tracking sheets, and deviation reports.
 
-Designed for ddPCR, qPCR, and other molecular workflows.
+- **Competency & Training Module**  
+  Generate training materials and competency assessments.
+
+- **AI/LLM Biological Reasoning Evaluator**  
+  Assess biological reasoning quality in AI workflows.
+
+- **Scientific Document Summarization (Business)**  
+  Summarize methods, workflows, and technical documents for operational use.
 
 ---
 
-### **3. QA/QC Record Assistant**
-Builds quality system documents such as:
-- QC logs  
-- Instrument maintenance records  
-- Reagent tracking sheets  
-- Deviation reports  
-- Corrective action summaries  
+# 🔬 Research Suite — BiofilmAI
 
-Supports laboratory reproducibility and compliance.
+The Research Suite supports multimodal biofilm prediction, molecular assay optimization, and scientific document interpretation.
 
----
+### **Included Research Modules**
+- **Gene Expression Checker**  
+  Analyze transcriptomic features used in Project A.
 
-### **4. ddPCR/qPCR Optimization Assistant**
-Provides structured guidance for improving molecular assay performance:
-- Troubleshooting  
-- Sensitivity improvements  
-- Reproducibility enhancements  
-- Workflow refinement  
-- Template quality evaluation  
-- Primer/probe considerations  
+- **Biofilm Image Analyzer**  
+  Process fluorescence and brightfield microscopy images.
 
----
+- **Multimodal Fusion Hub**  
+  Preview how gene expression and microscopy features combine.
 
-### **5. Competency & Training Module**
-Generates training materials and competency assessments for:
-- Molecular methods  
-- Biosafety  
-- QC systems  
-- Documentation standards  
-- Workflow proficiency  
+- **ddPCR/qPCR Optimization Assistant**  
+  Improve molecular assay sensitivity, reproducibility, and workflow performance.
 
-Supports onboarding and continuing education.
+- **Scientific Document Summarization (Research)**  
+  Summarize scientific documents to extract experimental purpose and context.
 
----
-
-### **6. AI/LLM Biological Reasoning Evaluator**
-Evaluates biological reasoning quality in AI/LLM workflows:
-- Consistency  
-- Domain alignment  
-- Accuracy  
-- Safety  
-- Interpretability  
-
-Supports clients adopting AI tools in laboratory environments.
+- **SOP/Protocol Summary Assistant**  
+  Summarize procedural scientific workflows (SOPs, protocols, JoVE‑style methods).
 
 ---
 
@@ -106,10 +79,12 @@ Supports clients adopting AI tools in laboratory environments.
 - Modular multipage Streamlit architecture  
 - Automated SOP and validation plan generation  
 - ddPCR/qPCR optimization workflows  
+- Multimodal dataset exploration  
 - CLIA‑aligned documentation templates  
 - Competency and training content creation  
 - AI/LLM reasoning evaluation tools  
-- Business AI Agent integration  
+- Business + Research suite separation  
+- BiofilmAI scientific modules integrated cleanly  
 
 ---
 
