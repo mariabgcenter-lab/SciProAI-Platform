@@ -10,26 +10,26 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# Sidebar Navigation (Corrected paths)
+# Sidebar Navigation (ALL modules now in /modules)
 # ---------------------------------------------------------
 
 st.sidebar.title("🏢 Business Suite")
 
-st.sidebar.page_link("pages/sopai.py", label="SOPAI")
-st.sidebar.page_link("pages/validateai.py", label="ValidateAI")
-st.sidebar.page_link("pages/qcai.py", label="QCAI")
-st.sidebar.page_link("pages/trainai.py", label="TrainAI")
-st.sidebar.page_link("pages/reasonai.py", label="ReasonAI")
-st.sidebar.page_link("pages/bizdocai.py", label="BizDocAI")
-st.sidebar.page_link("pages/bizagentai.py", label="BizAgentAI")
+st.sidebar.page_link("modules/sopai.py", label="SOPAI")
+st.sidebar.page_link("modules/validateai.py", label="ValidateAI")
+st.sidebar.page_link("modules/qcai.py", label="QCAI")
+st.sidebar.page_link("modules/trainai.py", label="TrainAI")
+st.sidebar.page_link("modules/reasonai.py", label="ReasonAI")
+st.sidebar.page_link("modules/bizdocai.py", label="BizDocAI")
+st.sidebar.page_link("modules/bizagentai.py", label="BizAgentAI")
 
 st.sidebar.title("🔬 Research Suite")
 
-st.sidebar.page_link("pages/biofilmai_multimodal.py", label="BiofilmAI Multimodal")
-st.sidebar.page_link("pages/biofilmnn_diagnostics.py", label="BiofilmNN Diagnostics")
-st.sidebar.page_link("pages/dashboards_visualization.py", label="Dashboards Visualization")
-st.sidebar.page_link("pages/biocontrol_inhibition.py", label="Biocontrol Inhibition")
-st.sidebar.page_link("pages/assayai_design.py", label="AssayAI Design")
+st.sidebar.page_link("modules/biofilmai_multimodal.py", label="BiofilmAI Multimodal")
+st.sidebar.page_link("modules/biofilmnn_diagnostics.py", label="BiofilmNN Diagnostics")
+st.sidebar.page_link("modules/dashboards_visualization.py", label="Dashboards Visualization")
+st.sidebar.page_link("modules/biocontrol_inhibition.py", label="Biocontrol Inhibition")
+st.sidebar.page_link("modules/assayai_design.py", label="AssayAI Design")
 
 # ---------------------------------------------------------
 # Home Page Content
@@ -49,10 +49,10 @@ st.subheader("🏁 Suite Overview")
 st.markdown("""
 This application is organized into two main sections:
 
-### 🧪 Business Suite — BG BioWrite Scientific
+### 🧪 Business Suite — BG BioWrite Scientific  
 Focused on consulting, documentation, training, and AI‑supported quality systems for CLIA and research laboratories.
 
-### 🔬 Research Suite — BiofilmAI
+### 🔬 Research Suite — BiofilmAI  
 Focused on multimodal biofilm prediction, molecular assay optimization, and scientific document support.
 
 Use the sidebar to open modules in either suite.
