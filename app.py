@@ -10,6 +10,23 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
+# Import Modules (from /modules folder)
+# ---------------------------------------------------------
+import modules.sopai as sopai
+import modules.validateai as validateai
+import modules.qcai as qcai
+import modules.trainai as trainai
+import modules.reasonai as reasonai
+import modules.bizdocai as bizdocai
+import modules.bizagentai as bizagentai
+
+import modules.biofilmai_multimodal as biofilmai_multimodal
+import modules.biofilmnn_diagnostics as biofilmnn_diagnostics
+import modules.dashboards_visualization as dashboards_visualization
+import modules.biocontrol_inhibition as biocontrol_inhibition
+import modules.assayai_design as assayai_design
+
+# ---------------------------------------------------------
 # Sidebar Navigation (Custom Router)
 # ---------------------------------------------------------
 st.sidebar.title("SciProAI Navigation")
@@ -33,43 +50,43 @@ choice = st.sidebar.radio(
 )
 
 # ---------------------------------------------------------
-# Routing Logic (NO .main() calls — modules run automatically)
+# Routing Logic — CALL .main() FOR EACH MODULE
 # ---------------------------------------------------------
 if choice == "🏢 SOPAI":
-    import modules.sopai
+    sopai.main()
 
 elif choice == "🏢 ValidateAI":
-    import modules.validateai
+    validateai.main()
 
 elif choice == "🏢 QCAI":
-    import modules.qcai
+    qcai.main()
 
 elif choice == "🏢 TrainAI":
-    import modules.trainai
+    trainai.main()
 
 elif choice == "🏢 ReasonAI":
-    import modules.reasonai
+    reasonai.main()
 
 elif choice == "🏢 BizDocAI":
-    import modules.bizdocai
+    bizdocai.main()
 
 elif choice == "🏢 BizAgentAI":
-    import modules.bizagentai
+    bizagentai.main()
 
 elif choice == "🔬 BiofilmAI Multimodal":
-    import modules.biofilmai_multimodal
+    biofilmai_multimodal.main()
 
 elif choice == "🔬 BiofilmNN Diagnostics":
-    import modules.biofilmnn_diagnostics
+    biofilmnn_diagnostics.main()
 
 elif choice == "🔬 Dashboards Visualization":
-    import modules.dashboards_visualization
+    dashboards_visualization.main()
 
 elif choice == "🔬 Biocontrol Inhibition":
-    import modules.biocontrol_inhibition
+    biocontrol_inhibition.main()
 
 elif choice == "🔬 AssayAI Design":
-    import modules.assayai_design
+    assayai_design.main()
 
 # ---------------------------------------------------------
 # Default Landing Page
