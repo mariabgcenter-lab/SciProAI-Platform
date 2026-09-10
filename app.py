@@ -4,33 +4,33 @@ import streamlit as st
 # Page Configuration
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="BiofilmAI Lab Suite",
-    page_icon="🧫",
+    page_title="BG BioWrite Scientific — AI Consulting Suite",
+    page_icon="📄",
     layout="wide"
 )
 
 # ---------------------------------------------------------
-# Home Page — BiofilmAI Lab Suite
+# Home Page — BG BioWrite Scientific
 # ---------------------------------------------------------
-st.title("BiofilmAI Lab Suite")
+st.title("BG BioWrite Scientific — AI Consulting Suite")
 
 st.write(
-    "Welcome to the BiofilmAI Lab Suite — a unified scientific environment designed to support "
-    "multimodal prediction of biofilm formation using gene expression data, microscopy features, "
-    "and structured scientific documentation."
+    "Welcome to the BG BioWrite Scientific AI Consulting Suite — a unified professional environment "
+    "designed to support SOP creation, CLIA‑aligned documentation, ddPCR/qPCR optimization, QA/QC workflows, "
+    "competency development, and AI‑supported laboratory operations."
 )
 
 st.markdown("---")
 
 # ---------------------------------------------------------
-# About BiofilmAI
+# About BG BioWrite Scientific
 # ---------------------------------------------------------
-st.subheader("📘 About BiofilmAI")
+st.subheader("📘 About BG BioWrite Scientific")
 
 st.write(
-    "BiofilmAI is a scientific machine learning project focused on predicting biofilm formation "
-    "by integrating transcriptomic features (Project A), microscopy-derived features (Project B), "
-    "and multimodal fusion strategies (Project C)."
+    "BG BioWrite Scientific provides professional consulting services including SOP development, "
+    "validation planning, molecular assay optimization, biosafety training, quality system support, "
+    "and AI‑enhanced scientific documentation for CLIA and research laboratories."
 )
 
 st.markdown("---")
@@ -38,17 +38,19 @@ st.markdown("---")
 # ---------------------------------------------------------
 # Available Modules
 # ---------------------------------------------------------
-st.subheader("🧪 Available Modules")
+st.subheader("🧪 Business AI Modules")
 
 st.markdown("""
-### **BiofilmAI Core Modules**
-- **Gene Expression Checker** — Analyze transcriptomic features used in Project A  
-- **Biofilm Image Analyzer** — Process microscopy images used in Project B  
-- **Multimodal Fusion Hub** — Preview how gene and image features combine in Project C  
+### **BG BioWrite Scientific Core Modules**
+- **SOP & Protocol Builder** — Generate structured, regulatory‑aligned SOPs  
+- **Validation Plan Generator** — Build CLIA‑aligned validation plans  
+- **QA/QC Record Assistant** — Create logs, maintenance records, and QC documentation  
+- **ddPCR/qPCR Optimization Assistant** — Improve assay sensitivity and reproducibility  
+- **Competency & Training Module** — Generate training materials and competency assessments  
+- **AI/LLM Biological Reasoning Evaluator** — Assess biological reasoning quality in AI workflows  
 
-### **BiofilmAI Support Modules**
-- **SOP & Protocol Summary Assistant** — Summarize procedural scientific workflows (SOPs, protocols, JoVE-style methods)  
-- **Scientific Document Summarization Module** — Summarize scientific documents to extract experimental purpose, workflow context, and key scientific content  
+### **Scientific Support Modules**
+- **Scientific Document Summarization** — Summarize methods, workflows, and publications  
 """)
 
 st.markdown("---")
