@@ -39,6 +39,7 @@ if module == "Reasoning Quality Scoring":
         if not text.strip():
             st.warning("Please paste reasoning text.")
         else:
+            # Simple illustrative scoring
             length_score = min(len(text) / 200, 1.0)
             clarity_score = 0.8
             logic_score = 0.85
