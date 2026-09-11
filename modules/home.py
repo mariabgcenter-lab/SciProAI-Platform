@@ -46,7 +46,7 @@ def main():
             st.success("Use **ReasonAI** → Reasoning Evaluator")
             return
 
-        # --- SIMPLE CONCEPT EXPLANATIONS (ADD MORE LATER) ---
+        # --- SIMPLE CONCEPT EXPLANATIONS ---
         if "lod" in q:
             st.info("LoD (Limit of Detection) is the lowest amount of analyte your method can reliably detect.")
             return
