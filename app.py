@@ -12,6 +12,7 @@ st.set_page_config(
 # ---------------------------------------------------------
 # Import Modules (from /modules folder)
 # ---------------------------------------------------------
+import modules.home as home
 import modules.sopai as sopai
 import modules.validateai as validateai
 import modules.qcai as qcai
@@ -34,6 +35,7 @@ st.sidebar.title("SciProAI Navigation")
 choice = st.sidebar.radio(
     "Select a module:",
     [
+        "🏠 Home",
         "🏢 SOPAI",
         "🏢 ValidateAI",
         "🏢 QCAI",
@@ -52,7 +54,10 @@ choice = st.sidebar.radio(
 # ---------------------------------------------------------
 # Routing Logic — CALL .main() FOR EACH MODULE
 # ---------------------------------------------------------
-if choice == "🏢 SOPAI":
+if choice == "🏠 Home":
+    home.main()
+
+elif choice == "🏢 SOPAI":
     sopai.main()
 
 elif choice == "🏢 ValidateAI":
@@ -87,26 +92,3 @@ elif choice == "🔬 Biocontrol Inhibition":
 
 elif choice == "🔬 AssayAI Design":
     assayai_design.main()
-
-# ---------------------------------------------------------
-# Default Landing Page
-# ---------------------------------------------------------
-else:
-    st.title("BG BioWrite Scientific — AI Consulting & Research Suite")
-    st.write(
-        "Welcome to the BG BioWrite Scientific AI Consulting & Research Suite — a unified environment "
-        "for laboratory documentation, quality systems, molecular assay optimization, and multimodal biofilm research."
-    )
-    st.markdown("---")
-    st.subheader("🏁 Suite Overview")
-    st.markdown("""
-    This application is organized into two main sections:
-
-    ### 🧪 Business Suite — BG BioWrite Scientific  
-    Focused on consulting, documentation, training, and AI‑supported quality systems for CLIA and research laboratories.
-
-    ### 🔬 Research Suite — BiofilmAI  
-    Focused on multimodal biofilm prediction, molecular assay optimization, and scientific document support.
-
-    Use the sidebar to open modules in either suite.
-    """)
