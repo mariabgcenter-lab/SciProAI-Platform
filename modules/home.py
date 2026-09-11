@@ -16,7 +16,7 @@ def main():
         ">
             <h3 style="margin-bottom: 5px;">🧪 SciProAI Guide</h3>
             <p style="margin-top: 0px; color: #555;">
-                Ask a question — I’ll guide you to the correct module or explain key scientific concepts.
+                Ask a question — I will guide you to the correct module or explain key scientific concepts.
             </p>
         </div>
         """, unsafe_allow_html=True)
