@@ -4,13 +4,34 @@ def main():
     st.title("🏠 Welcome to SciProAI")
     st.write("Your assistant for QC, validation, biofilm analytics, training, and documentation.")
 
-    st.subheader("🧪 SciProAI Guide")
-    st.write("Ask a question. I’ll guide you or explain simple concepts.")
+    # --- Styled Container ---
+    with st.container():
+        st.markdown("""
+        <div style="
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            background-color: #fafafa;
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
+        ">
+            <h3 style="margin-bottom: 5px;">🧪 SciProAI Guide</h3>
+            <p style="margin-top: 0px; color: #555;">
+                Ask a question — I’ll guide you to the correct module or explain key scientific concepts.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
 
     # --- Chatbot UI ---
-    user_question = st.text_input("Type your question here:")
+    user_question = st.text_input(
+        "Type your question:",
+        placeholder="Example: What is LoD? • How do I validate accuracy? • Show biofilm genes…"
+    )
 
-    if st.button("Ask"):
+    ask_button = st.button("Ask", use_container_width=True)
+
+    if ask_button:
         if not user_question.strip():
             st.warning("Please enter a question.")
             return
