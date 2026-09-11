@@ -4,7 +4,7 @@ def main():
     st.title("🏠 Welcome to SciProAI")
     st.write("Your assistant for QC, validation, biofilm analytics, training, and documentation.")
 
-    st.subheader("🤖 Chatbot Assistant")
+    st.subheader("🧪 SciProAI Guide")
     st.write("Ask a question. I’ll guide you or explain simple concepts.")
 
     # --- Chatbot UI ---
@@ -26,7 +26,7 @@ def main():
             st.success("Use **QCAI** → Quality Control & Audit Suite")
             return
 
-        if any(word in q for word in ["training", "competency", "staff", "qualification"]):
+        if any(word in q for word in ["training", "competency", "staff", "qualification"]]):
             st.success("Use **TrainAI** → Staff Training & Competency")
             return
 
