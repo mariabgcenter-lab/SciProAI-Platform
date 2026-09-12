@@ -1,26 +1,23 @@
-import streamlit as st
-
 # ---------------------------------------------------------
 # Page Configuration
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="BG BioWrite Scientific — AI Consulting & Research Suite",
+    page_title="BG BioWrite Scientific — Laboratory Automation Suite",
     page_icon="🧬",
     layout="wide"
 )
 
 # ---------------------------------------------------------
-# Import Modules (from /modules folder)
+# Import Core Modules (from /modules folder)
 # ---------------------------------------------------------
 import modules.home as home
-import modules.sopai as sopai
-import modules.validateai as validateai
-import modules.qcai as qcai
-import modules.trainai as trainai
-import modules.reasonai as reasonai
-import modules.bizdocai as bizdocai
-import modules.bizagentai as bizagentai
 
+# The 3 High-Value Commercial Lab Micro-Tools
+import modules.qcai as qcai                  # 1. QA/QC Log & Audit Checker
+import modules.validateai as validateai      # 2. Assay Data Formatter & Validator
+import modules.sopai as sopai                  # 3. SOP Version Control & Auditor
+
+# Research Modules (Kept as is)
 import modules.biofilmai_multimodal as biofilmai_multimodal
 import modules.biofilmnn_diagnostics as biofilmnn_diagnostics
 import modules.dashboards_visualization as dashboards_visualization
@@ -36,13 +33,9 @@ choice = st.sidebar.radio(
     "Select a module:",
     [
         "🏠 Home",
-        "🏢 SOPAI",
-        "🏢 ValidateAI",
-        "🏢 QCAI",
-        "🏢 TrainAI",
-        "🏢 ReasonAI",
-        "🏢 BizDocAI",
-        "🏢 BizAgentAI",
+        "🏢 1. QA/QC Log & Audit Checker",
+        "🏢 2. Assay Data Formatter & Validator",
+        "🏢 3. SOP Version Control & Auditor",
         "🔬 BiofilmAI Multimodal",
         "🔬 BiofilmNN Diagnostics",
         "🔬 Dashboards Visualization",
@@ -57,26 +50,14 @@ choice = st.sidebar.radio(
 if choice == "🏠 Home":
     home.main()
 
-elif choice == "🏢 SOPAI":
-    sopai.main()
-
-elif choice == "🏢 ValidateAI":
-    validateai.main()
-
-elif choice == "🏢 QCAI":
+elif choice == "🏢 1. QA/QC Log & Audit Checker":
     qcai.main()
 
-elif choice == "🏢 TrainAI":
-    trainai.main()
+elif choice == "🏢 2. Assay Data Formatter & Validator":
+    validateai.main()
 
-elif choice == "🏢 ReasonAI":
-    reasonai.main()
-
-elif choice == "🏢 BizDocAI":
-    bizdocai.main()
-
-elif choice == "🏢 BizAgentAI":
-    bizagentai.main()
+elif choice == "🏢 3. SOP Version Control & Auditor":
+    sopai.main()
 
 elif choice == "🔬 BiofilmAI Multimodal":
     biofilmai_multimodal.main()
