@@ -14,12 +14,12 @@ st.set_page_config(
 # ---------------------------------------------------------
 import modules.home as home
 
-# The 3 High-Value Commercial Lab Micro-Tools
+# Business Modules
 import modules.qcai as qcai                    # 1. QA/QC Log & Audit Checker
 import modules.methodai as methodai            # 2. Method Performance, Verification & Assay Suite
 import modules.sopai as sopai                  # 3. SOP Version Control & Auditor
 
-# Research Modules (Kept as is)
+# Research Modules
 import modules.biofilmai_multimodal as biofilmai_multimodal
 import modules.biofilmnn_diagnostics as biofilmnn_diagnostics
 import modules.dashboards_visualization as dashboards_visualization
@@ -27,8 +27,11 @@ import modules.biocontrol_inhibition as biocontrol_inhibition
 import modules.assayai_design as assayai_design
 
 # ---------------------------------------------------------
-# Sidebar Navigation (Custom Router)
+# Sidebar Navigation (Custom Router with Session State)
 # ---------------------------------------------------------
+if "nav_choice" not in st.session_state:
+    st.session_state.nav_choice = "🏠 Home & Directory"
+
 st.sidebar.title("SciProAI Navigation")
 
 choice = st.sidebar.radio(
@@ -43,7 +46,8 @@ choice = st.sidebar.radio(
         "🔬 Dashboards Visualization",
         "🔬 Biocontrol Inhibition",
         "🔬 AssayAI Design"
-    ]
+    ],
+    key="nav_choice"
 )
 
 # ---------------------------------------------------------
