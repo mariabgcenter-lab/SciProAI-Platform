@@ -1,68 +1,28 @@
-# SciProAI Platform — Commercial Laboratory Automation & Research Suite
+# SciProAI Platform
 
-Live Interactive App:  
-https://bg-biowrite-scientific.streamlit.app/
+Enterprise commercial and scientific research platform built for molecular diagnostics, laboratory operations, and biofilm research. Designed as a modular Streamlit application leveraging deterministic Python automation.
 
-The SciProAI Platform is a specialized Streamlit application designed to bridge advanced scientific research with deterministic, regulatory-aligned software tools for private-sector commercial testing and diagnostic laboratories.
+## 🏢 Core Commercial Business Modules
+1. **`qcai.py` (QA/QC Log & Audit Checker):** Audits instrument maintenance logs, environmental monitoring data, and batch release records against quality control thresholds.
+2. **`sopai.py` (SOP Version Control & Auditor):** Manages standard operating procedure documentation, tracks version changes, and audits procedural compliance.
+3. **`methodai.py` (Method Performance, Verification & Assay Data Suite):** Formats raw instrument outputs, calculates quantitative linearity & amplification efficiency, computes CLSI EP17 detection limits (LoB, LoD, LoQ), parses digital PCR (ddPCR) droplets, and executes method verification/comparison audits.
 
-SciProAI integrates 8 focused suites across scientific research and core laboratory operations, providing a robust environment for analytical data formatting, QA/QC log auditing, SOP compliance, and multimodal biofilm modeling.
+## 🔬 Scientific Research Suites
+* **`assayai_design`:** Advanced molecular assay design and primer/probe evaluation suite.
+* **Biofilm & Biocontrol Modules:** Multimodal modeling, neural network diagnostics, interactive visualization dashboards, and antimicrobial inhibition analysis.
 
----
-
-# 🧬 Platform Architecture
-
-SciProAI Platform is organized into two primary sections:
-
----
-
-## 🔬 Research AI Suites (5)
-
-Advanced scientific tools for modeling, diagnostics, visualization, biocontrol, and assay design.
-
-### 1. BiofilmAI — Multimodal Biofilm Modeling Suite
-- Gene expression analysis  
-- Microscopy image processing  
-- Multimodal fusion  
-- Research document summarization  
-
-### 2. BiofilmNN — AI Diagnostics Suite
-- Microbial imaging diagnostics  
-- AMR prediction (AMRAI Module)  
-- Diagnostic workflows  
-
-### 3. BiofilmAI Dashboards — Interactive Visualization Suite
-- MicrobiomeAI visualization  
-- Biofilm behavior dashboards  
-- Fusion data exploration  
-
-### 4. BiofilmAI Biocontrol — Inhibition Modeling Suite
-- Biofilm inhibition prediction  
-- Compound/surface interaction modeling  
-- Biocontrol strategy evaluation  
-
-### 5. AssayAI — Molecular Assay Design Suite
-- ddPCR/qPCR optimization  
-- PCRoptAI — Assay Module  
-- Assay modeling and comparison  
-
----
-
-## 🏢 Commercial Laboratory Micro-Tools (3)
-
-High-value, deterministic operational tools built to solve painful administrative, validation, and compliance bottlenecks for private commercial labs.
-
-### 1. QA/QC Log & Audit Checker (`qcai`)
-- Upload daily instrument or QC logs to instantly flag outliers, missing parameters, or non-conformance trends before internal audits.
-
-### 2. Assay Data Formatter & Validator (`validateai`)
-- Clean raw export files from PCR, qPCR, or ddPCR instruments, calculate baseline metrics (such as standard curve parameters), and format into compliance-ready reports.
-
-### 3. SOP Version Control & Auditor (`sopai`)
-- Audit and cross-reference Standard Operating Procedures against updated ISO or environmental standards to identify out-of-date documentation.
-
----
-
-# 📁 Folder Structure (Modules‑Only Architecture)
-
-All application modules live inside the `modules/` directory.  
-The `pages/` folder is not used, ensuring a clean layout with sidebar‑only navigation and no auto‑generated Streamlit menu.
+## 🚀 Project Structure
+```text
+sciproai/
+│
+├── app.py                  # Main Streamlit router & navigation controller
+├── home.py                 # Landing page & platform overview dashboard
+├── README.md               # Project documentation
+│
+├── modules/
+│   ├── qcai.py             # Business Module 1: QA/QC Auditing
+│   ├── sopai.py            # Business Module 2: SOP Compliance
+│   ├── methodai.py         # Business Module 3: Method Performance & Assay Data
+│   └── ... (Research modules including assayai_design)
+│
+└── requirements.txt        # Dependencies (streamlit, pandas, numpy, scipy)
