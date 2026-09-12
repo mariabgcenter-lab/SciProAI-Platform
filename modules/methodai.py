@@ -1,13 +1,13 @@
-mport streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy import stats
 
 def main():
-    st.title("🏢 Method Performance, Verification & Assay Data Suite (`methodai`)")
+    st.title("🏢 Method Performance, Verification & Assay Suite (`methodai`)")
     st.markdown("""
     Enterprise commercial module for parsing instrument exports, evaluating standard curve linearity, 
-    computing CLSI EP17 detection limits, parsing digital PCR droplets, and running method comparison/verification audits.
+    computing CLSI EP17 detection limits, parsing digital PCR droplets, and running method verification and comparison audits.
     """)
 
     st.markdown("---")
