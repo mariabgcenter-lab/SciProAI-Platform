@@ -1,3 +1,4 @@
+# app.py
 import streamlit as st
 
 # ---------------------------------------------------------
@@ -19,12 +20,12 @@ import modules.qcai as qcai                    # 1. QA/QC Log & Audit Checker
 import modules.methodai as methodai            # 2. Method Performance, Verification & Assay Suite
 import modules.sopai as sopai                  # 3. SOP Version Control & Auditor
 
-# Research Modules
+# Research Modules (Aligned with home.py order)
+import modules.assayai_design as assayai_design
 import modules.biofilmai_multimodal as biofilmai_multimodal
 import modules.biofilmnn_diagnostics as biofilmnn_diagnostics
 import modules.dashboards_visualization as dashboards_visualization
 import modules.biocontrol_inhibition as biocontrol_inhibition
-import modules.assayai_design as assayai_design
 
 # ---------------------------------------------------------
 # Sidebar Navigation (Custom Router with Session State)
@@ -41,11 +42,11 @@ choice = st.sidebar.radio(
         "🏢 1. QA/QC Log & Audit Checker",
         "🏢 2. Method Performance & Assay Suite",
         "🏢 3. SOP Version Control & Auditor",
+        "🔬 AssayAI Design",
         "🔬 BiofilmAI Multimodal",
         "🔬 BiofilmNN Diagnostics",
         "🔬 Dashboards Visualization",
-        "🔬 Biocontrol Inhibition",
-        "🔬 AssayAI Design"
+        "🔬 Biocontrol Inhibition"
     ],
     key="nav_choice"
 )
@@ -65,6 +66,9 @@ elif choice == "🏢 2. Method Performance & Assay Suite":
 elif choice == "🏢 3. SOP Version Control & Auditor":
     sopai.main()
 
+elif choice == "🔬 AssayAI Design":
+    assayai_design.main()
+
 elif choice == "🔬 BiofilmAI Multimodal":
     biofilmai_multimodal.main()
 
@@ -76,6 +80,3 @@ elif choice == "🔬 Dashboards Visualization":
 
 elif choice == "🔬 Biocontrol Inhibition":
     biocontrol_inhibition.main()
-
-elif choice == "🔬 AssayAI Design":
-    assayai_design.main()
