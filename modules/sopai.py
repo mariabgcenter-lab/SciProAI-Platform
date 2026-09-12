@@ -1,4 +1,3 @@
-Python
 import streamlit as pd  # keeping imports clean
 import streamlit as st
 
