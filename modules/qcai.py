@@ -31,7 +31,7 @@ def main():
 
     # Provide a sample data option for instant testing
     if uploaded_file is None:
-        st.info("👆 Upload your QC log file above, or load the sample dataset below to test the audit engine right now.")
+        st.info("Upload your QC log file above, or load the sample dataset below to test the audit engine right now.")
         if st.button("Load Sample QC Log Dataset", use_container_width=True):
             # Create a realistic sample DataFrame with an injected outlier
             np.random.seed(42)
