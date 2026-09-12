@@ -1,17 +1,17 @@
-# SciProAI Platform — Unified Research & Business AI Ecosystem
+# SciProAI Platform — Commercial Laboratory Automation & Research Suite
 
 Live Interactive App:  
 https://bg-biowrite-scientific.streamlit.app/
 
-The SciProAI Platform is a unified Streamlit application designed to support scientific research, laboratory operations, regulatory documentation, molecular assay development, multimodal biofilm modeling, and AI‑enhanced business workflows.
+The SciProAI Platform is a specialized Streamlit application designed to bridge advanced scientific research with deterministic, regulatory-aligned software tools for private-sector commercial testing and diagnostic laboratories.
 
-SciProAI integrates 12 specialized AI Suites across scientific and business domains, providing a complete environment for research teams, diagnostic laboratories, and scientific consulting operations.
+SciProAI integrates 8 focused suites across scientific research and core laboratory operations, providing a robust environment for analytical data formatting, QA/QC log auditing, SOP compliance, and multimodal biofilm modeling.
 
 ---
 
 # 🧬 Platform Architecture
 
-SciProAI Platform is organized into two major sections:
+SciProAI Platform is organized into two primary sections:
 
 ---
 
@@ -47,22 +47,22 @@ Advanced scientific tools for modeling, diagnostics, visualization, biocontrol, 
 
 ---
 
-## 🧪 Business AI Suites (7)
+## 🏢 Commercial Laboratory Micro-Tools (3)
 
-Professional laboratory and consulting tools for documentation, compliance, training, and reasoning evaluation.
+High-value, deterministic operational tools built to solve painful administrative, validation, and compliance bottlenecks for private commercial labs.
 
-### SOPAI — SOP & Protocol Builder  
-### ValidateAI — Validation Plan Generator  
-### QCAI — Quality & Compliance Suite  
-### TrainAI — Competency & Training Suite  
-### ReasonAI — AI/LLM Reasoning Evaluator  
-### BizDocAI — Business Document Summarization  
-### BizAgentAI — Business AI Agent  
+### 1. QA/QC Log & Audit Checker (`qcai`)
+- Upload daily instrument or QC logs to instantly flag outliers, missing parameters, or non-conformance trends before internal audits.
+
+### 2. Assay Data Formatter & Validator (`validateai`)
+- Clean raw export files from PCR, qPCR, or ddPCR instruments, calculate baseline metrics (such as standard curve parameters), and format into compliance-ready reports.
+
+### 3. SOP Version Control & Auditor (`sopai`)
+- Audit and cross-reference Standard Operating Procedures against updated ISO or environmental standards to identify out-of-date documentation.
 
 ---
 
 # 📁 Folder Structure (Modules‑Only Architecture)
 
-All application modules now live inside the `modules/` directory.  
-The `pages/` folder is no longer used, ensuring a clean layout with sidebar‑only navigation and no auto‑generated Streamlit menu.
-
+All application modules live inside the `modules/` directory.  
+The `pages/` folder is not used, ensuring a clean layout with sidebar‑only navigation and no auto‑generated Streamlit menu.
