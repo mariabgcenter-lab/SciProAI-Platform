@@ -1,4 +1,5 @@
 import streamlit as st
+
 # ---------------------------------------------------------
 # Page Configuration
 # ---------------------------------------------------------
@@ -14,8 +15,8 @@ st.set_page_config(
 import modules.home as home
 
 # The 3 High-Value Commercial Lab Micro-Tools
-import modules.qcai as qcai                  # 1. QA/QC Log & Audit Checker
-import modules.validateai as validateai      # 2. Assay Data Formatter & Validator
+import modules.qcai as qcai                    # 1. QA/QC Log & Audit Checker
+import modules.methodai as methodai            # 2. Method Performance, Verification & Assay Suite
 import modules.sopai as sopai                  # 3. SOP Version Control & Auditor
 
 # Research Modules (Kept as is)
@@ -35,13 +36,14 @@ choice = st.sidebar.radio(
     [
         "🏠 Home",
         "🏢 1. QA/QC Log & Audit Checker",
-        "🏢 2. Assay Data Formatter & Validator",
+        "🏢 2. Method Performance & Assay Suite",
         "🏢 3. SOP Version Control & Auditor",
         "🔬 BiofilmAI Multimodal",
         "🔬 BiofilmNN Diagnostics",
         "🔬 Dashboards Visualization",
         "🔬 Biocontrol Inhibition",
-        "🔬 AssayAI Design"
+        "🔬 AssayAI Design",
+        "📖 Platform Guide & Directory"
     ]
 )
 
@@ -54,8 +56,8 @@ if choice == "🏠 Home":
 elif choice == "🏢 1. QA/QC Log & Audit Checker":
     qcai.main()
 
-elif choice == "🏢 2. Assay Data Formatter & Validator":
-    validateai.main()
+elif choice == "🏢 2. Method Performance & Assay Suite":
+    methodai.main()
 
 elif choice == "🏢 3. SOP Version Control & Auditor":
     sopai.main()
@@ -74,3 +76,18 @@ elif choice == "🔬 Biocontrol Inhibition":
 
 elif choice == "🔬 AssayAI Design":
     assayai_design.main()
+
+elif choice == "📖 Platform Guide & Directory":
+    st.title("📖 SciProAI Platform Directory & Module Guide")
+    st.markdown("### Core Commercial Business Modules")
+    st.info("""
+    * **`qcai.py` (QA/QC Log & Audit Checker):** Audits instrument maintenance logs, environmental monitoring data, and batch release records against quality control thresholds.
+    * **`sopai.py` (SOP Version Control & Auditor):** Manages standard operating procedure documentation, tracks version changes, and audits procedural compliance.
+    * **`methodai.py` (Method Performance, Verification & Assay Suite):** Formats raw instrument outputs, calculates quantitative linearity & amplification efficiency, computes CLSI EP17 detection limits (LoB, LoD, LoQ), processes digital PCR (ddPCR) Poisson partitioning, and executes method verification/comparison audits.
+    """)
+    
+    st.markdown("### Scientific Research Suites")
+    st.success("""
+    * **`assayai_design`:** Advanced molecular assay design and primer/probe evaluation suite.
+    * **Biofilm & Biocontrol Modules:** Multimodal modeling, neural network diagnostics, interactive visualization dashboards, and antimicrobial inhibition analysis.
+    """)
