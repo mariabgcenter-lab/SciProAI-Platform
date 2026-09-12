@@ -1,8 +1,10 @@
 # update_readme.py
 
-corrected_readme = """# SciProAI Platform
+readme_content = """# SciProAI Platform
 
 Enterprise commercial and scientific research platform built for molecular diagnostics, laboratory operations, and biofilm research. Designed as a modular Streamlit application leveraging deterministic Python automation.
+
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](YOUR_DEPLOYMENT_LINK_HERE)
 
 ## 🏢 Business Modules
 1. **`qcai.py` (QA/QC Log & Audit Checker):** Audits instrument maintenance logs, environmental monitoring data, and batch release records against quality control thresholds.
