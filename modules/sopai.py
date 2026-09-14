@@ -203,7 +203,7 @@ def main():
               f" {target_standard}"
           )
 
-        # Metrics summary
+        # Metrics summary (Fixed list index bug here)
         m1, m2, m3 = st.columns(3)
         m1.metric("Target Benchmark", target_standard.split("(")[0].strip())
         m2.metric(
