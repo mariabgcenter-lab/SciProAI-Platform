@@ -123,8 +123,8 @@ def main():
 
   st.markdown("---")
 
-  # Layout: Two columns for configuration and upload
-  col1, col2 = st.columns()
+  # Fixed: Added positional argument '2' to st.columns()
+  col1, col2 = st.columns(2)
 
   with col1:
     st.subheader("1. Audit Configuration")
@@ -203,7 +203,7 @@ def main():
               f" {target_standard}"
           )
 
-        # Metrics summary (Fixed list index bug here)
+        # Metrics summary (Fixed index access [0])
         m1, m2, m3 = st.columns(3)
         m1.metric("Target Benchmark", target_standard.split("(")[0].strip())
         m2.metric(
