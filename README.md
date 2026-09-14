@@ -1,6 +1,4 @@
-# update_readme.py
-
-readme_content = """# SciProAI Platform
+## SciProAI Platform
 
 Enterprise commercial and scientific research platform built for molecular diagnostics, laboratory operations, and biofilm research. Designed as a modular Streamlit application leveraging deterministic Python automation.
 
