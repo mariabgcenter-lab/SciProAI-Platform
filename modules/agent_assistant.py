@@ -84,7 +84,12 @@ def main():
 
 if __name__ == "__main__":
   main()
-2. Update app.pyGo to GitHub $\rightarrow$ app.py $\rightarrow$ click the Pencil (edit) icon, replace everything with this code, and commit:# app.py
+Click Commit changes... at the top right.
+2. Update app.py
+Open app.py on GitHub.
+Click the Pencil (edit) icon.
+Select everything, delete it, and paste this code:
+# app.py
 import streamlit as st
 
 # ---------------------------------------------------------
