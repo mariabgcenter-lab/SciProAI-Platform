@@ -13,7 +13,7 @@ st.set_page_config(
 # ---------------------------------------------------------
 # Import Core Modules (from /modules folder)
 # ---------------------------------------------------------
-import modules.agent_assistant as agent_assistant  # Agentic AI Assistant
+import modules.agent_assistant as agent_assistant
 import modules.assayai_design as assayai_design
 import modules.biocontrol_inhibition as biocontrol_inhibition
 import modules.biofilmai_multimodal as biofilmai_multimodal
