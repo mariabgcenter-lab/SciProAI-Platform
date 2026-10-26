@@ -1,10 +1,6 @@
-import re
 import streamlit as st
 
 
-# ==============================================================================
-# 1. Define Laboratory Tools & Reasoning Logic
-# ==============================================================================
 def analyze_qa_qc_log(query: str) -> str:
   """Simulates/analyzes Quality Control logs, Westgard rules, and out-of-spec flags."""
   return (
@@ -13,7 +9,7 @@ def analyze_qa_qc_log(query: str) -> str:
       " 2026-10-25).\n"
       "- **Control Value:** 12.4 (Expected range: 10.0 ± 0.8).\n"
       "- **Action Item:** Re-calibrate sensor and re-run controls before"
-      " testing patient/research samples."
+      " testing samples."
   )
 
 
@@ -22,7 +18,7 @@ def evaluate_method_performance(query: str) -> str:
   return (
       "🔬 **Method Performance Evaluation:**\n"
       "- **Intra-assay Precision (%CV):** 3.2% (Pass target: < 5.0%).\n"
-      "- **Linearity (R²):** 0.998 across range 10^2 to 10^7 copies/µL.\n"
+      "- **Linearity (R2):** 0.998 across range 10^2 to 10^7 copies/uL.\n"
       "- **Action Item:** Assay validation parameters meet required clinical QA"
       " targets."
   )
@@ -33,29 +29,23 @@ def run_agentic_reasoning(user_query: str) -> str:
   query_lower = user_query.lower()
   results = []
 
-  # Route to QA/QC tool if QC keywords detected
-  if any(
-      k in query_lower
-      for k in ["qc", "quality control", "westgard", "lot", "log", "flag"]
-  ):
+  qc_keywords = ["qc", "quality control", "westgard", "lot", "log", "flag"]
+  method_keywords = [
+      "method",
+      "performance",
+      "cv",
+      "precision",
+      "accuracy",
+      "linearity",
+      "validation",
+  ]
+
+  if any(k in query_lower for k in qc_keywords):
     results.append(analyze_qa_qc_log(user_query))
 
-  # Route to Method Performance tool if method keywords detected
-  if any(
-      k in query_lower
-      for k in [
-          "method",
-          "performance",
-          "cv",
-          "precision",
-          "accuracy",
-          "linearity",
-          "validation",
-      ]
-  ):
+  if any(k in query_lower for k in method_keywords):
     results.append(evaluate_method_performance(user_query))
 
-  # If query is general, invoke both tools
   if not results:
     results.append(analyze_qa_qc_log(user_query))
     results.append(evaluate_method_performance(user_query))
@@ -63,15 +53,13 @@ def run_agentic_reasoning(user_query: str) -> str:
   return "\n\n".join(results)
 
 
-# ==============================================================================
-# 2. Main Page Render Function (Called by app.py)
-# ==============================================================================
 def main():
   st.title("🤖 Agentic Lab Assistant")
-  st.markdown("""
-    Ask plain-English questions across your **QA/QC logs** and **Method Performance statistics**. 
-    The AI agent automatically selects the right evaluation tools and synthesizes an actionable report.
-    """)
+  st.markdown(
+      "Ask plain-English questions across your **QA/QC logs** and **Method"
+      " Performance statistics**. The AI agent automatically selects the right"
+      " evaluation tools and synthesizes an actionable report."
+  )
   st.markdown("---")
 
   user_query = st.text_input(
@@ -96,21 +84,86 @@ def main():
 
 if __name__ == "__main__":
   main()
-Step 3: Connect it inside app.py
-In your main app.py file, add the module import at the top and include it in your navigation menu:
-# 1. At the top of app.py, import the new module:
-import modules.agent_assistant as agent_assistant
-import modules.sopai as sopai
+2. Update app.pyGo to GitHub $\rightarrow$ app.py $\rightarrow$ click the Pencil (edit) icon, replace everything with this code, and commit:# app.py
+import streamlit as st
 
-# 2. In your sidebar navigation selection in app.py:
-selected_module = st.sidebar.radio(
-    "Select Platform Module:",
-    ["SOP Auditor", "QA/QC & Method Agent", "Other Modules..."],
+# ---------------------------------------------------------
+# Page Configuration
+# ---------------------------------------------------------
+st.set_page_config(
+    page_title="BG BioWrite Scientific — Laboratory Automation Suite",
+    page_icon="🧬",
+    layout="wide",
 )
 
-# 3. Add the conditional block to run it:
-if selected_module == "SOP Auditor":
-  sopai.main()
-elif selected_module == "QA/QC & Method Agent":
+# ---------------------------------------------------------
+# Import Core Modules (from /modules folder)
+# ---------------------------------------------------------
+import modules.agent_assistant as agent_assistant
+import modules.assayai_design as assayai_design
+import modules.biocontrol_inhibition as biocontrol_inhibition
+import modules.biofilmai_multimodal as biofilmai_multimodal
+import modules.biofilmnn_diagnostics as biofilmnn_diagnostics
+import modules.dashboards_visualization as dashboards_visualization
+import modules.home as home
+import modules.methodai as methodai
+import modules.qcai as qcai
+import modules.sopai as sopai
+
+# ---------------------------------------------------------
+# Sidebar Navigation (Custom Router with Session State)
+# ---------------------------------------------------------
+if "nav_choice" not in st.session_state:
+  st.session_state.nav_choice = "🏠 Home & Directory"
+
+st.sidebar.title("SciProAI Navigation")
+
+choice = st.sidebar.radio(
+    "Select a module:",
+    [
+        "🏠 Home & Directory",
+        "🤖 Agentic Lab Assistant",
+        "🏢 1. QA/QC Log & Audit Checker",
+        "🏢 2. Method Performance & Assay Suite",
+        "🏢 3. SOP Version Control & Auditor",
+        "🔬 AssayAI Design",
+        "🔬 BiofilmAI Multimodal",
+        "🔬 BiofilmNN Diagnostics",
+        "🔬 Dashboards Visualization",
+        "🔬 Biocontrol Inhibition",
+    ],
+    key="nav_choice",
+)
+
+# ---------------------------------------------------------
+# Routing Logic — CALL .main() FOR EACH MODULE
+# ---------------------------------------------------------
+if choice == "🏠 Home & Directory":
+  home.main()
+
+elif choice == "🤖 Agentic Lab Assistant":
   agent_assistant.main()
-  
+
+elif choice == "🏢 1. QA/QC Log & Audit Checker":
+  qcai.main()
+
+elif choice == "🏢 2. Method Performance & Assay Suite":
+  methodai.main()
+
+elif choice == "🏢 3. SOP Version Control & Auditor":
+  sopai.main()
+
+elif choice == "🔬 AssayAI Design":
+  assayai_design.main()
+
+elif choice == "🔬 BiofilmAI Multimodal":
+  biofilmai_multimodal.main()
+
+elif choice == "🔬 BiofilmNN Diagnostics":
+  biofilmnn_diagnostics.main()
+
+elif choice == "🔬 Dashboards Visualization":
+  dashboards_visualization.main()
+
+elif choice == "🔬 Biocontrol Inhibition":
+  biocontrol_inhibition.main()
