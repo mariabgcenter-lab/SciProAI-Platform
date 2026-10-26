@@ -2,19 +2,19 @@ import streamlit as st
 
 
 def analyze_qa_qc_log(query: str) -> str:
-  """Simulates/analyzes Quality Control logs, Westgard rules, and out-of-spec flags."""
+  """Simulates and analyzes Quality Control logs and Westgard rules."""
   return (
       "📊 **QA/QC Log Analysis:**\n"
       "- **Status:** Flagged Lot #204 (1_3s Westgard violation detected on"
       " 2026-10-25).\n"
-      "- **Control Value:** 12.4 (Expected range: 10.0 ± 0.8).\n"
+      "- **Control Value:** 12.4 (Expected range: 10.0 +/- 0.8).\n"
       "- **Action Item:** Re-calibrate sensor and re-run controls before"
       " testing samples."
   )
 
 
 def evaluate_method_performance(query: str) -> str:
-  """Evaluates method performance metrics like %CV, precision, accuracy, and linearity."""
+  """Evaluates method performance metrics like %CV, precision, and linearity."""
   return (
       "🔬 **Method Performance Evaluation:**\n"
       "- **Intra-assay Precision (%CV):** 3.2% (Pass target: < 5.0%).\n"
@@ -25,7 +25,7 @@ def evaluate_method_performance(query: str) -> str:
 
 
 def run_agentic_reasoning(user_query: str) -> str:
-  """Central router that routes the query to the correct tool based on context."""
+  """Central router that routes queries to the correct lab tool based on context."""
   query_lower = user_query.lower()
   results = []
 
@@ -84,11 +84,10 @@ def main():
 
 if __name__ == "__main__":
   main()
-Click Commit changes... at the top right.
-2. Update app.py
-Open app.py on GitHub.
-Click the Pencil (edit) icon.
-Select everything, delete it, and paste this code:
+Click Commit changes... in the top right.
+3. Re-paste Clean Code into app.py
+Go back to the main repository folder and click on app.py.
+Click the Pencil icon (Edit), select everything, and replace it with this clean routing script:
 # app.py
 import streamlit as st
 
