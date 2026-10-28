@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# Secure API Key Initialization
+# Secure API Key Initialization (Streamlit Cloud Secrets)
 # ---------------------------------------------------------
 try:
   gemini_key = st.secrets["GEMINI_API_KEY"]
