@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------
-# Import Core Modules (from /modules folder)
+# Import Core Modules
 # ---------------------------------------------------------
 import modules.agent_assistant as agent_assistant
 import modules.assayai_design as assayai_design
@@ -20,67 +20,94 @@ import modules.biofilmai_multimodal as biofilmai_multimodal
 import modules.biofilmnn_diagnostics as biofilmnn_diagnostics
 import modules.dashboards_visualization as dashboards_visualization
 import modules.home as home
-import modules.methodai as methodai  # 2. Method Performance, Verification & Assay Suite
-# Business Modules
-import modules.qcai as qcai  # 1. QA/QC Log & Audit Checker
-import modules.sopai as sopai  # 3. SOP Version Control & Auditor
-
-# Research Modules (Aligned with home.py order)
+import modules.methodai as methodai
+import modules.qcai as qcai
+import modules.sopai as sopai
 
 # ---------------------------------------------------------
-# Sidebar Navigation (Custom Router with Session State)
+# Sidebar Navigation (3 Clean Suites)
 # ---------------------------------------------------------
 if "nav_choice" not in st.session_state:
-  st.session_state.nav_choice = "🏠 Home & Directory"
+  st.session_state.nav_choice = "🏠 Home & Agent Assistant"
 
 st.sidebar.title("SciProAI Navigation")
 
 choice = st.sidebar.radio(
-    "Select a module:",
+    "Select Suite:",
     [
-        "🏠 Home & Directory",
-        "🤖 Agentic Lab Assistant",
-        "🏢 1. QA/QC Log & Audit Checker",
-        "🏢 2. Method Performance & Assay Suite",
-        "🏢 3. SOP Version Control & Auditor",
-        "🔬 AssayAI Design",
-        "🔬 BiofilmAI Multimodal",
-        "🔬 BiofilmNN Diagnostics",
-        "🔬 Dashboards Visualization",
-        "🔬 Biocontrol Inhibition",
+        "🏠 Home & Agent Assistant",
+        "🏢 Compliance & Quality Suite",
+        "🔬 Bio-Digital Research Suite",
     ],
     key="nav_choice",
 )
 
+st.sidebar.markdown("---")
+st.sidebar.info(
+    "💡 **Agentic AI Active:** The Gemini Supervisor agent routes queries"
+    " across all modules."
+)
+
 # ---------------------------------------------------------
-# Routing Logic — CALL .main() FOR EACH MODULE
+# Suite 1: Home & Agent Assistant
 # ---------------------------------------------------------
-if choice == "🏠 Home & Directory":
-  home.main()
+if choice == "🏠 Home & Agent Assistant":
+  tab1, tab2 = st.tabs(["🏠 Platform Overview", "🤖 Agentic Lab Assistant"])
+  with tab1:
+    home.main()
+  with tab2:
+    agent_assistant.main()
 
-elif choice == "🤖 Agentic Lab Assistant":
-  agent_assistant.main()
+# ---------------------------------------------------------
+# Suite 2: Compliance & Quality Suite
+# ---------------------------------------------------------
+elif choice == "🏢 Compliance & Quality Suite":
+  st.header("🏢 Enterprise Compliance & Quality Suite")
+  st.markdown(
+      "Automated Westgard rule evaluation, method precision verification, and"
+      " CLIA '88 / ISO 17025 SOP compliance auditing."
+  )
+  st.markdown("---")
 
-elif choice == "🏢 1. QA/QC Log & Audit Checker":
-  qcai.main()
+  tab1, tab2, tab3 = st.tabs([
+      "📊 QA/QC Log & Audit Checker",
+      "🔬 Method Performance & Assay Suite",
+      "📄 SOP Version Control & Auditor",
+  ])
 
-elif choice == "🏢 2. Method Performance & Assay Suite":
-  methodai.main()
+  with tab1:
+    qcai.main()
+  with tab2:
+    methodai.main()
+  with tab3:
+    sopai.main()
 
-elif choice == "🏢 3. SOP Version Control & Auditor":
-  sopai.main()
+# ---------------------------------------------------------
+# Suite 3: Bio-Digital Research Suite
+# ---------------------------------------------------------
+elif choice == "🔬 Bio-Digital Research Suite":
+  st.header("🔬 Bio-Digital Research & Computational Suite")
+  st.markdown(
+      "Microbial imaging diagnostics, biofilm biomass quantification, and"
+      " molecular assay design tools."
+  )
+  st.markdown("---")
 
-elif choice == "🔬 AssayAI Design":
-  assayai_design.main()
+  tab1, tab2, tab3, tab4, tab5 = st.tabs([
+      "🧬 AssayAI Design",
+      "📷 BiofilmAI Multimodal",
+      "🧠 BiofilmNN Diagnostics",
+      "📊 Dashboards Visualization",
+      "🧫 Biocontrol Inhibition",
+  ])
 
-elif choice == "🔬 BiofilmAI Multimodal":
-  biofilmai_multimodal.main()
-
-elif choice == "🔬 BiofilmNN Diagnostics":
-  biofilmnn_diagnostics.main()
-
-elif choice == "🔬 Dashboards Visualization":
-  dashboards_visualization.main()
-
-elif choice == "🔬 Biocontrol Inhibition":
-  biocontrol_inhibition.main()
+  with tab1:
+    assayai_design.main()
+  with tab2:
+    biofilmai_multimodal.main()
+  with tab3:
+    biofilmnn_diagnostics.main()
+  with tab4:
+    dashboards_visualization.main()
+  with tab5:
+    biocontrol_inhibition.main()
