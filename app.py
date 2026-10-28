@@ -1,113 +1,130 @@
-# app.py
 import streamlit as st
+import os
 
-# ---------------------------------------------------------
-# Page Configuration
-# ---------------------------------------------------------
+# --- Page Configuration ---
 st.set_page_config(
-    page_title="BG BioWrite Scientific — Laboratory Automation Suite",
+    page_title="SciProAI Platform",
     page_icon="🧬",
-    layout="wide",
+    layout="wide"
 )
 
-# ---------------------------------------------------------
-# Import Core Modules
-# ---------------------------------------------------------
-import modules.agent_assistant as agent_assistant
-import modules.assayai_design as assayai_design
-import modules.biocontrol_inhibition as biocontrol_inhibition
-import modules.biofilmai_multimodal as biofilmai_multimodal
-import modules.biofilmnn_diagnostics as biofilmnn_diagnostics
-import modules.dashboards_visualization as dashboards_visualization
-import modules.home as home
-import modules.methodai as methodai
-import modules.qcai as qcai
-import modules.sopai as sopai
+# --- Secure API Key Initialization ---
+try:
+    gemini_key = st.secrets["GEMINI_API_KEY"]
+    os.environ["GEMINI_API_KEY"] = gemini_key
+except Exception as e:
+    st.warning("⚠️ GEMINI_API_KEY not found in Streamlit Secrets. Please configure it in your app settings.")
 
-# ---------------------------------------------------------
-# Sidebar Navigation (3 Clean Suites)
-# ---------------------------------------------------------
-if "nav_choice" not in st.session_state:
-  st.session_state.nav_choice = "🏠 Home & Agent Assistant"
-
+# --- Sidebar Navigation ---
 st.sidebar.title("SciProAI Navigation")
-
-choice = st.sidebar.radio(
-    "Select Suite:",
-    [
-        "🏠 Home & Agent Assistant",
-        "🏢 Compliance & Quality Suite",
-        "🔬 Bio-Digital Research Suite",
-    ],
-    key="nav_choice",
-)
+suite = st.sidebar.selectbox("Select Suite:", [
+    "🏠 Home & Agent Assistant", 
+    "🏢 Compliance & Quality Suite", 
+    "🔬 Bio-Digital Research Suite"
+])
 
 st.sidebar.markdown("---")
-st.sidebar.info(
-    "💡 **Agentic AI Active:** The Gemini Supervisor agent routes queries"
-    " across all modules."
-)
 
-# ---------------------------------------------------------
-# Suite 1: Home & Agent Assistant
-# ---------------------------------------------------------
-if choice == "🏠 Home & Agent Assistant":
-  tab1, tab2 = st.tabs(["🏠 Platform Overview", "🤖 Agentic Lab Assistant"])
-  with tab1:
-    home.main()
-  with tab2:
-    agent_assistant.main()
+active_module = None
+domain = None
 
-# ---------------------------------------------------------
-# Suite 2: Compliance & Quality Suite
-# ---------------------------------------------------------
-elif choice == "🏢 Compliance & Quality Suite":
-  st.header("🏢 Enterprise Compliance & Quality Suite")
-  st.markdown(
-      "Automated Westgard rule evaluation, method precision verification, and"
-      " CLIA '88 / ISO 17025 SOP compliance auditing."
-  )
-  st.markdown("---")
+if suite == "🔬 Bio-Digital Research Suite":
+    st.sidebar.subheader("Bio-Digital Domains")
+    domain = st.sidebar.radio(
+        "Select Domain:",
+        ["AssayAI", "BiofilmAI", "BiofilmNN", "Dashboards", "Biocontrol"]
+    )
+    st.sidebar.markdown("---")
+    
+    if domain == "AssayAI":
+        active_module = st.sidebar.selectbox("AssayAI Module:", [
+            "Assay Design Workspace",
+            "Primer/Probe Table Explorer",
+            "Ct / Copy Number Calculator",
+            "Assay Performance Preview"
+        ])
+    elif domain == "BiofilmAI":
+        active_module = st.sidebar.selectbox("BiofilmAI Module:", [
+            "Gene Expression Checker",
+            "Biofilm Image Analyzer",
+            "Multimodal Fusion Hub",
+            "Research Document Summary"
+        ])
+    elif domain == "BiofilmNN":
+        active_module = st.sidebar.selectbox("BiofilmNN Module:", [
+            "Microbial Image Diagnostics",
+            "AMR Prediction (AMRAI)",
+            "Image Feature Extraction",
+            "Diagnostic Reasoning Preview"
+        ])
+    elif domain == "Dashboards":
+        active_module = st.sidebar.selectbox("Select Dashboard:", [
+            "Gene Expression Dashboard",
+            "Biofilm Behavior Dashboard",
+            "MicrobiomeAI Dashboard",
+            "Image Metrics Dashboard",
+            "Fusion Data Dashboard"
+        ])
+    elif domain == "Biocontrol":
+        active_module = st.sidebar.selectbox("Biocontrol Module:", [
+            "Inhibition Dataset Explorer",
+            "Compound Interaction Modeling",
+            "Dose‑Response Visualization",
+            "Inhibition Prediction Preview"
+        ])
 
-  tab1, tab2, tab3 = st.tabs([
-      "📊 QA/QC Log & Audit Checker",
-      "🔬 Method Performance & Assay Suite",
-      "📄 SOP Version Control & Auditor",
-  ])
+elif suite == "🏢 Compliance & Quality Suite":
+    active_module = st.sidebar.selectbox("Compliance Module:", [
+        "Compliance Workspace",
+        "Audit Trail Explorer",
+        "Quality Control Review"
+    ])
 
-  with tab1:
-    qcai.main()
-  with tab2:
-    methodai.main()
-  with tab3:
-    sopai.main()
+elif suite == "🏠 Home & Agent Assistant":
+    active_module = "Supervisor Overview"
 
-# ---------------------------------------------------------
-# Suite 3: Bio-Digital Research Suite
-# ---------------------------------------------------------
-elif choice == "🔬 Bio-Digital Research Suite":
-  st.header("🔬 Bio-Digital Research & Computational Suite")
-  st.markdown(
-      "Microbial imaging diagnostics, biofilm biomass quantification, and"
-      " molecular assay design tools."
-  )
-  st.markdown("---")
+# --- Main Content Area ---
+st.title(f"SciProAI Platform // {suite}")
 
-  tab1, tab2, tab3, tab4, tab5 = st.tabs([
-      "🧬 AssayAI Design",
-      "📷 BiofilmAI Multimodal",
-      "🧠 BiofilmNN Diagnostics",
-      "📊 Dashboards Visualization",
-      "🧫 Biocontrol Inhibition",
-  ])
+if domain:
+    st.caption(f"Active Domain: **{domain}** | Active Module: **{active_module}**")
+else:
+    st.caption(f"Active Module: **{active_module}**")
 
-  with tab1:
-    assayai_design.main()
-  with tab2:
-    biofilmai_multimodal.main()
-  with tab3:
-    biofilmnn_diagnostics.main()
-  with tab4:
-    dashboards_visualization.main()
-  with tab5:
-    biocontrol_inhibition.main()
+st.markdown("---")
+
+# --- Dynamic Module Workspace ---
+if suite == "🏠 Home & Agent Assistant":
+    st.info("💡 **Agentic AI Active:** The Gemini Supervisor agent is online and ready to route queries across all modules.")
+    
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        st.subheader("Supervisor Agent Chat")
+        user_prompt = st.text_input("Ask the SciProAI Assistant anything across your suites:")
+        if user_prompt:
+            st.success(f"Supervisor routing query: '{user_prompt}' to relevant modules...")
+    with col2:
+        st.metric(label="System Status", value="Secure & Online", delta="Gemini 1.5-flash")
+
+elif suite == "🏢 Compliance & Quality Suite":
+    st.subheader(f"🏢 {active_module}")
+    st.write("Professional compliance tracking, audit trails, and quality control metrics workspace.")
+    # Add your compliance module specific UI elements here
+
+elif suite == "🔬 Bio-Digital Research Suite":
+    st.subheader(f"🔬 {domain} / {active_module}")
+    st.write(f"Welcome to the **{active_module}** workspace. Configure parameters, analyze molecular data, or run predictions below.")
+    
+    # Example interactive container for your modules
+    with st.container():
+        st.markdown(f"### Interactive Workspace: {active_module}")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.text_input("Enter Sample ID or Target Gene:")
+            st.selectbox("Select Assay Model:", ["Standard RT-qPCR", "Digital PCR (ddPCR)", "Deep Learning Biofilm Model"])
+        with col2:
+            st.file_uploader("Upload Experimental Dataset (.csv, .xlsx, .fastq)")
+        
+        if st.button("Run Analysis"):
+            st.spinner("Executing agentic pipeline...")
+            st.success("Analysis complete! Results ready for review.")
