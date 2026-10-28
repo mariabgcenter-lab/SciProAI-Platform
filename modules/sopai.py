@@ -1,4 +1,6 @@
+import os
 import re
+import google.generativeai as genai
 import streamlit as st
 
 # ==============================================================================
@@ -114,138 +116,187 @@ BENCHMARK_SCHEMAS = {
 # 2. Main Module Page Function
 # ==============================================================================
 def main():
-  st.title("📄 SOP Version Control & Compliance Auditor")
+  st.title("📄 SOP Version Control & Compliance Auditor (`sopai`)")
   st.markdown("""
     Upload your laboratory Standard Operating Procedure (SOP) to instantly cross-reference it 
-    against quality management standards (like ISO/IEC 17025 or ISO 9001) and flag missing compliance elements, 
-    outdated version markers, or structural gaps.
+    against quality management standards (like ISO/IEC 17025 or CLIA '88) and flag missing compliance elements, 
+    outdated version markers, or structural gaps, backed by Gemini AI.
     """)
 
   st.markdown("---")
 
-  # Fixed: Added positional argument '2' to st.columns()
-  col1, col2 = st.columns(2)
-
-  with col1:
-    st.subheader("1. Audit Configuration")
-    target_standard = st.selectbox(
-        "Select Regulatory Benchmark / Standard:",
-        [
-            "CLIA '88 / CAP Checklist (Clinical Diagnostics)",
-            "ISO/IEC 17025:2017 (Testing & Calibration Laboratories)",
-            "FDA cGMP / GLP Compliance Framework",
-            "Internal Standard / Custom Checklist",
-        ],
-    )
-    sop_id_input = st.text_input(
-        "SOP Document ID (Optional)", placeholder="e.g., SOP-MB-104"
-    )
-    version_input = st.text_input(
-        "Current Document Version", placeholder="e.g., Rev 3.2"
-    )
-
-  with col2:
-    st.subheader("2. Upload SOP Document")
-    uploaded_file = st.file_uploader(
-        "Upload SOP File (.txt or .md)", type=["txt", "md"]
-    )
-    st.info(
-        "Tip: If your SOP is a PDF, paste the extracted text or upload a .txt"
-        " export for precise parsing."
-    )
+  # Internal Sub-Navigation Menu (Tabs/Radio to include AI Advisor)
+  sub_tool = st.radio(
+      "Select SOP Module:",
+      ["📋 SOP Gap & Compliance Auditor", "🤖 Gemini SOP & Compliance AI Advisor"],
+      horizontal=True,
+  )
 
   st.markdown("---")
 
-  if uploaded_file is not None:
-    # Read file content
-    file_content = uploaded_file.read().decode("utf-8", errors="ignore")
+  if sub_tool == "📋 SOP Gap & Compliance Auditor":
+    col1, col2 = st.columns(2)
 
-    st.subheader("3. Document Preview")
-    with st.expander("View Uploaded SOP Text"):
-      st.text_area("Source Text", file_content, height=200, disabled=True)
+    with col1:
+      st.subheader("1. Audit Configuration")
+      target_standard = st.selectbox(
+          "Select Regulatory Benchmark / Standard:",
+          [
+              "CLIA '88 / CAP Checklist (Clinical Diagnostics)",
+              "ISO/IEC 17025:2017 (Testing & Calibration Laboratories)",
+              "FDA cGMP / GLP Compliance Framework",
+              "Internal Standard / Custom Checklist",
+          ],
+      )
+      sop_id_input = st.text_input(
+          "SOP Document ID (Optional)", placeholder="e.g., SOP-MB-104"
+      )
+      version_input = st.text_input(
+          "Current Document Version", placeholder="e.g., Rev 3.2"
+      )
 
-    if st.button(
-        "Run Compliance & Gap Audit", use_container_width=True, type="primary"
-    ):
-      with st.spinner(
-          "Analyzing document structure and checking regulatory elements..."
+    with col2:
+      st.subheader("2. Upload SOP Document")
+      uploaded_file = st.file_uploader(
+          "Upload SOP File (.txt or .md)", type=["txt", "md"]
+      )
+      st.info(
+          "Tip: If your SOP is a PDF, paste the extracted text or upload a .txt"
+          " export for precise parsing."
+      )
+
+    st.markdown("---")
+
+    if uploaded_file is not None:
+      # Read file content
+      file_content = uploaded_file.read().decode("utf-8", errors="ignore")
+
+      st.subheader("3. Document Preview")
+      with st.expander("View Uploaded SOP Text"):
+        st.text_area("Source Text", file_content, height=200, disabled=True)
+
+      if st.button(
+          "Run Compliance & Gap Audit", use_container_width=True, type="primary"
       ):
+        with st.spinner(
+            "Analyzing document structure and checking regulatory elements..."
+        ):
 
-        # --- Dynamic Benchmark Rule Selection ---
-        if "CLIA" in target_standard:
-          mandatory_elements = BENCHMARK_SCHEMAS["CLIA '88"]
-        elif "17025" in target_standard:
-          mandatory_elements = BENCHMARK_SCHEMAS["ISO/IEC 17025"]
-        elif "FDA" in target_standard:
-          mandatory_elements = BENCHMARK_SCHEMAS["FDA cGMP / GLP"]
-        else:
-          mandatory_elements = BENCHMARK_SCHEMAS["CLIA '88"]
-
-        # --- Deterministic Compliance Checks ---
-        text_lower = file_content.lower()
-        audit_results = {}
-        missing_count = 0
-
-        for element, keywords in mandatory_elements.items():
-          found = any(kw in text_lower for kw in keywords)
-          audit_results[element] = found
-          if not found:
-            missing_count += 1
-
-        # --- Results Display ---
-        st.markdown("---")
-        st.subheader("📋 SOP Compliance Audit Report")
-
-        if sop_id_input or version_input:
-          st.caption(
-              f"**Document:** {sop_id_input or 'Unspecified'} | **Version:**"
-              f" {version_input or 'Unspecified'} | **Standard:**"
-              f" {target_standard}"
-          )
-
-        # Metrics summary (Fixed index access [0])
-        m1, m2, m3 = st.columns(3)
-        m1.metric("Target Benchmark", target_standard.split("(")[0].strip())
-        m2.metric(
-            "Mandatory Elements Found",
-            f"{len(mandatory_elements) - missing_count} /"
-            f" {len(mandatory_elements)}",
-        )
-        m3.metric(
-            "Audit Status",
-            "Needs Revision" if missing_count > 0 else "Fully Aligned",
-            delta="Action Required" if missing_count > 0 else "Passed",
-            delta_color="inverse" if missing_count > 0 else "normal",
-        )
-
-        st.markdown("### Structural Gap Breakdown")
-        for element, passed in audit_results.items():
-          if passed:
-            st.success(f"**[FOUND]** {element} section identified in text.")
+          # --- Dynamic Benchmark Rule Selection ---
+          if "CLIA" in target_standard:
+            mandatory_elements = BENCHMARK_SCHEMAS["CLIA '88"]
+          elif "17025" in target_standard:
+            mandatory_elements = BENCHMARK_SCHEMAS["ISO/IEC 17025"]
+          elif "FDA" in target_standard:
+            mandatory_elements = BENCHMARK_SCHEMAS["FDA cGMP / GLP"]
           else:
-            st.error(
-                f"**[MISSING / UNCLEAR]** {element} section could not be"
-                " detected. Recommended addition for compliance."
+            mandatory_elements = BENCHMARK_SCHEMAS["CLIA '88"]
+
+          # --- Deterministic Compliance Checks ---
+          text_lower = file_content.lower()
+          audit_results = {}
+          missing_count = 0
+
+          for element, keywords in mandatory_elements.items():
+            found = any(kw in text_lower for kw in keywords)
+            audit_results[element] = found
+            if not found:
+              missing_count += 1
+
+          # --- Results Display ---
+          st.markdown("---")
+          st.subheader("📋 SOP Compliance Audit Report")
+
+          if sop_id_input or version_input:
+            st.caption(
+                f"**Document:** {sop_id_input or 'Unspecified'} | **Version:**"
+                f" {version_input or 'Unspecified'} | **Standard:**"
+                f" {target_standard}"
             )
 
-        st.markdown("### Next Steps & Recommendations")
-        if missing_count > 0:
-          st.warning(
-              "Your document is missing critical sections required by standard"
-              " laboratory quality frameworks. Update the sections flagged"
-              " above before submitting for formal QA review."
+          m1, m2, m3 = st.columns(3)
+          m1.metric("Target Benchmark", target_standard.split("(")[0].strip())
+          m2.metric(
+              "Mandatory Elements Found",
+              f"{len(mandatory_elements) - missing_count} /"
+              f" {len(mandatory_elements)}",
           )
-        else:
-          st.success(
-              "All primary structural and regulatory elements appear to be"
-              " present in this document text."
+          m3.metric(
+              "Audit Status",
+              "Needs Revision" if missing_count > 0 else "Fully Aligned",
+              delta="Action Required" if missing_count > 0 else "Passed",
+              delta_color="inverse" if missing_count > 0 else "normal",
           )
 
-  else:
-    st.info(
-        "Please upload an SOP text file above to initiate the compliance"
-        " audit."
+          st.markdown("### Structural Gap Breakdown")
+          for element, passed in audit_results.items():
+            if passed:
+              st.success(f"**[FOUND]** {element} section identified in text.")
+            else:
+              st.error(
+                  f"**[MISSING / UNCLEAR]** {element} section could not be"
+                  " detected. Recommended addition for compliance."
+              )
+
+          st.markdown("### Next Steps & Recommendations")
+          if missing_count > 0:
+            st.warning(
+                "Your document is missing critical sections required by standard"
+                " laboratory quality frameworks. Update the sections flagged"
+                " above before submitting for formal QA review."
+            )
+          else:
+            st.success(
+                "All primary structural and regulatory elements appear to be"
+                " present in this document text."
+            )
+
+    else:
+      st.info(
+          "Please upload an SOP text file above to initiate the compliance"
+          " audit."
+      )
+
+  elif sub_tool == "🤖 Gemini SOP & Compliance AI Advisor":
+    st.subheader("🤖 Gemini SOP Authoring & Regulatory Compliance Advisor")
+    st.write(
+        "Consult the AI advisor to draft missing SOP sections, interpret"
+        " complex CLIA/ISO compliance rules, or generate standardized"
+        " corrective wording."
     )
+
+    sop_query = st.text_area(
+        "Describe your SOP drafting challenge or paste a section for"
+        " compliance review:"
+    )
+
+    if st.button("Run AI SOP Consultation", type="primary"):
+      if not sop_query.strip():
+        st.warning("Please enter your SOP details or query.")
+      else:
+        api_key = st.secrets.get(
+            "GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", "")
+        )
+        if not api_key:
+          st.error(
+              "⚠️ GEMINI_API_KEY not found in Streamlit Secrets or Environment"
+              " Variables."
+          )
+        else:
+          with st.spinner("Analyzing regulatory compliance requirements..."):
+            try:
+              genai.configure(api_key=api_key)
+              model = genai.GenerativeModel("gemini-1.5-flash")
+              prompt = f"""
+                            You are an expert regulatory affairs officer, laboratory quality manager, and ISO/CLIA inspection specialist. 
+                            Provide rigorous, professional drafting assistance and compliance guidance based on the following SOP inquiry:
+                            {sop_query}
+                            """
+              response = model.generate_content(prompt)
+              st.markdown("### 📋 AI Regulatory & Drafting Guidance")
+              st.success(response.text)
+            except Exception as e:
+              st.error(f"API Error: {e}")
 
 
 if __name__ == "__main__":
