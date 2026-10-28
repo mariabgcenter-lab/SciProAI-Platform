@@ -76,8 +76,9 @@ if suite == "🔬 Bio-Digital Research Suite":
 elif suite == "🏢 Compliance & Quality Suite":
     active_module = st.sidebar.selectbox("Compliance Module:", [
         "Compliance Workspace",
-        "Audit Trail Explorer",
-        "Quality Control Review"
+        "SOP & Regulatory Audit",
+        "Quality Control Metrics",
+        "CAPA & Risk Tracker"
     ])
 
 elif suite == "🏠 Home & Agent Assistant":
@@ -109,13 +110,34 @@ if suite == "🏠 Home & Agent Assistant":
 elif suite == "🏢 Compliance & Quality Suite":
     st.subheader(f"🏢 {active_module}")
     st.write("Professional compliance tracking, audit trails, and quality control metrics workspace.")
-    # Add your compliance module specific UI elements here
+    
+    # Specific UI controls per Compliance Module
+    if active_module == "Compliance Workspace":
+        st.info("📊 **Global Compliance Status:** All active assays and datasets meet current ISO / GxP standards.")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Active Audits", "12", "Passed")
+        col2.metric("SOP Compliance", "99.4%", "+0.2%")
+        col3.metric("Pending QA Reviews", "2", "-1")
+
+    elif active_module == "SOP & Regulatory Audit":
+        st.subheader("Regulatory & Standard Review")
+        st.file_uploader("Upload SOP or Regulatory Protocol (.pdf, .docx)", type=["pdf", "docx"])
+        st.button("Run Automated Compliance Audit")
+
+    elif active_module == "Quality Control Metrics":
+        st.subheader("Quality Control Data Hub")
+        st.selectbox("Select Batch ID:", ["Batch_2026_A1", "Batch_2026_B2", "Batch_2026_C3"])
+        st.write("QC analysis details and run metrics display here.")
+
+    elif active_module == "CAPA & Risk Tracker":
+        st.subheader("Corrective & Preventive Action (CAPA)")
+        st.text_input("Log New Corrective Action / Deviation:")
+        st.button("Submit CAPA Log")
 
 elif suite == "🔬 Bio-Digital Research Suite":
     st.subheader(f"🔬 {domain} / {active_module}")
     st.write(f"Welcome to the **{active_module}** workspace. Configure parameters, analyze molecular data, or run predictions below.")
     
-    # Example interactive container for your modules
     with st.container():
         st.markdown(f"### Interactive Workspace: {active_module}")
         col1, col2 = st.columns(2)
