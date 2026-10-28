@@ -8,9 +8,6 @@ try:
 except ImportError:
   HAS_GENAI = False
 
-# Default API Key (Fallback if not configured in Streamlit Secrets)
-GEMINI_API_KEY = "AQ.Ab8RN6L2rnlSwdGS7sHcL0NNVAXVdMm3Y2CEYKlya0kPuZnbMQ"
-
 
 # ---------------------------------------------------------
 # 1. Laboratory Tools (Functions & Schemas)
@@ -43,9 +40,9 @@ def evaluate_method_performance(query: str) -> str:
 # 2. Agentic Reasoning Loop (ReAct + Gemini Tool Calling)
 # ---------------------------------------------------------
 def run_agentic_reasoning(user_query: str) -> str:
-  # Check Streamlit secrets first, then environment, then default key
+  # Safely read key from Streamlit Secrets or Environment Variable
   api_key = st.secrets.get(
-      "GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", GEMINI_API_KEY)
+      "GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", "")
   )
 
   with st.status("🤖 Agent Orchestrator Reasoning...", expanded=True) as status:
