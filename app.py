@@ -1,125 +1,123 @@
-import streamlit as st
+# app.py
 import os
+import streamlit as st
 
-# --- Page Configuration ---
+# ---------------------------------------------------------
+# Page Configuration
+# ---------------------------------------------------------
 st.set_page_config(
-    page_title="SciProAI Platform",
+    page_title="SciProAI Platform — Laboratory Automation Suite",
     page_icon="🧬",
-    layout="wide"
+    layout="wide",
 )
 
-# --- Secure API Key Initialization ---
+# ---------------------------------------------------------
+# Secure API Key Initialization
+# ---------------------------------------------------------
 try:
-    gemini_key = st.secrets["GEMINI_API_KEY"]
-    os.environ["GEMINI_API_KEY"] = gemini_key
-except Exception as e:
-    st.warning("⚠️ GEMINI_API_KEY not found in Streamlit Secrets.")
+  gemini_key = st.secrets["GEMINI_API_KEY"]
+  os.environ["GEMINI_API_KEY"] = gemini_key
+except Exception:
+  pass  # Falls back gracefully if running locally without secrets.toml
 
-# --- Clean Sidebar Navigation ---
+# ---------------------------------------------------------
+# Import Core Modules
+# ---------------------------------------------------------
+import modules.agent_assistant as agent_assistant
+import modules.assayai_design as assayai_design
+import modules.biocontrol_inhibition as biocontrol_inhibition
+import modules.biofilmai_multimodal as biofilmai_multimodal
+import modules.biofilmnn_diagnostics as biofilmnn_diagnostics
+import modules.dashboards_visualization as dashboards_visualization
+import modules.home as home
+import modules.methodai as methodai
+import modules.qcai as qcai
+import modules.sopai as sopai
+
+# ---------------------------------------------------------
+# Sidebar Navigation (3 Clean Suites)
+# ---------------------------------------------------------
+if "nav_choice" not in st.session_state:
+  st.session_state.nav_choice = "🏠 Home & Agent Assistant"
+
 st.sidebar.title("SciProAI Navigation")
-suite = st.sidebar.selectbox("Select Suite:", [
-    "🏠 Home & Agent Assistant", 
-    "🏢 Compliance & Quality Suite", 
-    "🔬 Bio-Digital Research Suite"
-])
 
-# --- Main Content Area ---
-st.title(f"SciProAI Platform // {suite}")
-st.markdown("---")
+choice = st.sidebar.radio(
+    "Select Suite:",
+    [
+        "🏠 Home & Agent Assistant",
+        "🏢 Compliance & Quality Suite",
+        "🔬 Bio-Digital Research Suite",
+    ],
+    key="nav_choice",
+)
 
-# --- Suite Workspaces ---
-if suite == "🏠 Home & Agent Assistant":
-    st.info("💡 **Agentic AI Active:** The Gemini Supervisor agent is online and ready to route queries across all modules.")
-    
-    col1, col2 = st.columns([2, 1])
-    with col1:
-        st.subheader("Supervisor Agent Chat")
-        user_prompt = st.text_input("Ask the SciProAI Assistant anything across your suites:")
-        if user_prompt:
-            st.success(f"Supervisor routing query: '{user_prompt}' to relevant modules...")
-    with col2:
-        st.metric(label="System Status", value="Secure & Online", delta="Gemini 1.5-flash")
+st.sidebar.markdown("---")
+st.sidebar.info(
+    "💡 **Agentic AI Active:** The Gemini Supervisor agent routes queries"
+    " across all modules."
+)
 
-elif suite == "🏢 Compliance & Quality Suite":
-    st.subheader("🏢 Compliance & Quality Workspace")
-    
-    # Clean selectbox for Compliance modules
-    compliance_module = st.selectbox("Select Compliance Module:", [
-        "Compliance Workspace",
-        "SOP & Regulatory Audit",
-        "Quality Control Metrics",
-        "CAPA & Risk Tracker"
-    ])
-    
-    st.markdown(f"### Active Module: {compliance_module}")
-    if compliance_module == "Compliance Workspace":
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Active Audits", "12", "Passed")
-        col2.metric("SOP Compliance", "99.4%", "+0.2%")
-        col3.metric("Pending QA Reviews", "2", "-1")
-    else:
-        st.write(f"Workspace for **{compliance_module}** loaded successfully.")
+# ---------------------------------------------------------
+# Suite 1: Home & Agent Assistant
+# ---------------------------------------------------------
+if choice == "🏠 Home & Agent Assistant":
+  tab1, tab2 = st.tabs(["🏠 Platform Overview", "🤖 Agentic Lab Assistant"])
+  with tab1:
+    home.main()
+  with tab2:
+    agent_assistant.main()
 
-elif suite == "🔬 Bio-Digital Research Suite":
-    st.subheader("🔬 Bio-Digital Research Domains")
-    
-    # Use clean tabs across the top instead of a messy sidebar radio button!
-    tab_assay, tab_biofilm, tab_nn, tab_dash, tab_biocontrol = st.tabs([
-        "🧬 AssayAI", 
-        "🦠 BiofilmAI", 
-        "🧠 BiofilmNN", 
-        "📊 Dashboards", 
-        "🧪 Biocontrol"
-    ])
-    
-    with tab_assay:
-        st.markdown("### AssayAI Modules")
-        module = st.selectbox("Select AssayAI Module:", [
-            "Assay Design Workspace",
-            "Primer/Probe Table Explorer",
-            "Ct / Copy Number Calculator",
-            "Assay Performance Preview"
-        ])
-        st.info(f"Active Workspace: **{module}**")
-        # Add your AssayAI UI code here
-        
-    with tab_biofilm:
-        st.markdown("### BiofilmAI Modules")
-        module = st.selectbox("Select BiofilmAI Module:", [
-            "Gene Expression Checker",
-            "Biofilm Image Analyzer",
-            "Multimodal Fusion Hub",
-            "Research Document Summary"
-        ])
-        st.info(f"Active Workspace: **{module}**")
-        
-    with tab_nn:
-        st.markdown("### BiofilmNN Modules")
-        module = st.selectbox("Select BiofilmNN Module:", [
-            "Microbial Image Diagnostics",
-            "AMR Prediction (AMRAI)",
-            "Image Feature Extraction",
-            "Diagnostic Reasoning Preview"
-        ])
-        st.info(f"Active Workspace: **{module}**")
-        
-    with tab_dash:
-        st.markdown("### Research Dashboards")
-        module = st.selectbox("Select Dashboard:", [
-            "Gene Expression Dashboard",
-            "Biofilm Behavior Dashboard",
-            "MicrobiomeAI Dashboard",
-            "Image Metrics Dashboard",
-            "Fusion Data Dashboard"
-        ])
-        st.info(f"Active Workspace: **{module}**")
-        
-    with tab_biocontrol:
-        st.markdown("### Biocontrol Modules")
-        module = st.selectbox("Select Biocontrol Module:", [
-            "Inhibition Dataset Explorer",
-            "Compound Interaction Modeling",
-            "Dose‑Response Visualization",
-            "Inhibition Prediction Preview"
-        ])
-        st.info(f"Active Workspace: **{module}**")
+# ---------------------------------------------------------
+# Suite 2: Compliance & Quality Suite
+# ---------------------------------------------------------
+elif choice == "🏢 Compliance & Quality Suite":
+  st.header("🏢 Enterprise Compliance & Quality Suite")
+  st.markdown(
+      "Automated Westgard rule evaluation, method precision verification, and"
+      " CLIA '88 / ISO 17025 SOP compliance auditing."
+  )
+  st.markdown("---")
+
+  tab1, tab2, tab3 = st.tabs([
+      "📊 QA/QC Log & Audit Checker",
+      "🔬 Method Performance & Assay Suite",
+      "📄 SOP Version Control & Auditor",
+  ])
+
+  with tab1:
+    qcai.main()
+  with tab2:
+    methodai.main()
+  with tab3:
+    sopai.main()
+
+# ---------------------------------------------------------
+# Suite 3: Bio-Digital Research Suite
+# ---------------------------------------------------------
+elif choice == "🔬 Bio-Digital Research Suite":
+  st.header("🔬 Bio-Digital Research & Computational Suite")
+  st.markdown(
+      "Microbial imaging diagnostics, biofilm biomass quantification, and"
+      " molecular assay design tools."
+  )
+  st.markdown("---")
+
+  tab1, tab2, tab3, tab4, tab5 = st.tabs([
+      "🧬 AssayAI Design",
+      "📷 BiofilmAI Multimodal",
+      "🧠 BiofilmNN Diagnostics",
+      "📊 Dashboards Visualization",
+      "🧫 Biocontrol Inhibition",
+  ])
+
+  with tab1:
+    assayai_design.main()
+  with tab2:
+    biofilmai_multimodal.main()
+  with tab3:
+    biofilmnn_diagnostics.main()
+  with tab4:
+    dashboards_visualization.main()
+  with tab5:
+    biocontrol_inhibition.main()
