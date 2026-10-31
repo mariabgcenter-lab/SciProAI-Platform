@@ -1,303 +1,72 @@
-import os
-import re
-import google.generativeai as genai
 import streamlit as st
+import modules.rag_engine as rag_engine
 
-# ==============================================================================
-# 1. Regulatory Benchmark Rulesets
-# ==============================================================================
-BENCHMARK_SCHEMAS = {
-    "CLIA '88": {
-        "Purpose / Objective": ["purpose", "objective", "aim", "scope"],
-        "Authorized Personnel": [
-            "responsibility",
-            "authorized",
-            "personnel",
-            "analyst",
-        ],
-        "Specimen Handling": ["specimen", "sample", "rejection", "storage"],
-        "Materials & Calibration": [
-            "equipment",
-            "reagents",
-            "calibration",
-            "materials",
-        ],
-        "Step-by-Step Procedure": [
-            "procedure",
-            "method",
-            "instructions",
-            "step",
-        ],
-        "Quality Control (QC)": [
-            "quality control",
-            "qc",
-            "acceptance criteria",
-            "blank",
-        ],
-        "Corrective Action": [
-            "corrective action",
-            "troubleshooting",
-            "deviation",
-        ],
-        "Reference Ranges & Controls": [
-            "reference range",
-            "document history",
-            "effective date",
-        ],
-    },
-    "ISO/IEC 17025": {
-        "Scope & Method Validation": [
-            "scope",
-            "validation",
-            "verification",
-            "range",
-        ],
-        "Equipment Traceability": [
-            "equipment",
-            "traceability",
-            "calibration",
-            "standards",
-        ],
-        "Environmental Controls": [
-            "environment",
-            "temperature",
-            "humidity",
-            "monitoring",
-        ],
-        "Handling of Test Items": [
-            "handling",
-            "protection",
-            "storage",
-            "identification",
-        ],
-        "Data Integrity": ["uncertainty", "calculation", "quality control"],
-        "Reporting & Document History": [
-            "report",
-            "version",
-            "effective date",
-            "approved by",
-        ],
-    },
-    "FDA cGMP / GLP": {
-        "Study Purpose & Test Article": [
-            "purpose",
-            "test article",
-            "control article",
-        ],
-        "Study Director Duties": [
-            "study director",
-            "responsibility",
-            "personnel",
-        ],
-        "Reagents Expiration": ["reagents", "expiration", "labeling", "storage"],
-        "Biosafety & PPE Warnings": [
-            "safety",
-            "ppe",
-            "hazard",
-            "precaution",
-        ],
-        "Step-by-Step Procedure": ["procedure", "method", "protocol", "step"],
-        "Raw Data Archival": [
-            "archival",
-            "raw data",
-            "quality control",
-            "retention",
-        ],
-        "Deviations & Amendments": [
-            "deviation",
-            "amendment",
-            "corrective action",
-        ],
-    },
-}
-
-
-# ==============================================================================
-# 2. Main Module Page Function
-# ==============================================================================
 def main():
-  st.title("📄 SOP Version Control & Compliance Auditor (`sopai`)")
-  st.markdown("""
-    Upload your laboratory Standard Operating Procedure (SOP) to instantly cross-reference it 
-    against quality management standards (like ISO/IEC 17025 or CLIA '88) and flag missing compliance elements, 
-    outdated version markers, or structural gaps, backed by Gemini AI.
+    st.title("📋 SOP Version Control & Compliance Auditor")
+    st.markdown("""
+    Upload custom **Standard Operating Procedures (PDFs)** or choose default CLIA/ISO guidelines. 
+    The grounded RAG engine extracts procedural rules, audits compliance, and highlights revision points.
     """)
-
-  st.markdown("---")
-
-  # Internal Sub-Navigation Menu (Tabs/Radio to include AI Advisor)
-  sub_tool = st.radio(
-      "Select SOP Module:",
-      ["📋 SOP Gap & Compliance Auditor", "🤖 Gemini SOP & Compliance AI Advisor"],
-      horizontal=True,
-  )
-
-  st.markdown("---")
-
-  if sub_tool == "📋 SOP Gap & Compliance Auditor":
-    col1, col2 = st.columns(2)
-
-    with col1:
-      st.subheader("1. Audit Configuration")
-      target_standard = st.selectbox(
-          "Select Regulatory Benchmark / Standard:",
-          [
-              "CLIA '88 / CAP Checklist (Clinical Diagnostics)",
-              "ISO/IEC 17025:2017 (Testing & Calibration Laboratories)",
-              "FDA cGMP / GLP Compliance Framework",
-              "Internal Standard / Custom Checklist",
-          ],
-      )
-      sop_id_input = st.text_input(
-          "SOP Document ID (Optional)", placeholder="e.g., SOP-MB-104"
-      )
-      version_input = st.text_input(
-          "Current Document Version", placeholder="e.g., Rev 3.2"
-      )
-
-    with col2:
-      st.subheader("2. Upload SOP Document")
-      uploaded_file = st.file_uploader(
-          "Upload SOP File (.txt or .md)", type=["txt", "md"]
-      )
-      st.info(
-          "Tip: If your SOP is a PDF, paste the extracted text or upload a .txt"
-          " export for precise parsing."
-      )
-
     st.markdown("---")
 
-    if uploaded_file is not None:
-      # Read file content
-      file_content = uploaded_file.read().decode("utf-8", errors="ignore")
-
-      st.subheader("3. Document Preview")
-      with st.expander("View Uploaded SOP Text"):
-        st.text_area("Source Text", file_content, height=200, disabled=True)
-
-      if st.button(
-          "Run Compliance & Gap Audit", use_container_width=True, type="primary"
-      ):
-        with st.spinner(
-            "Analyzing document structure and checking regulatory elements..."
-        ):
-
-          # --- Dynamic Benchmark Rule Selection ---
-          if "CLIA" in target_standard:
-            mandatory_elements = BENCHMARK_SCHEMAS["CLIA '88"]
-          elif "17025" in target_standard:
-            mandatory_elements = BENCHMARK_SCHEMAS["ISO/IEC 17025"]
-          elif "FDA" in target_standard:
-            mandatory_elements = BENCHMARK_SCHEMAS["FDA cGMP / GLP"]
-          else:
-            mandatory_elements = BENCHMARK_SCHEMAS["CLIA '88"]
-
-          # --- Deterministic Compliance Checks ---
-          text_lower = file_content.lower()
-          audit_results = {}
-          missing_count = 0
-
-          for element, keywords in mandatory_elements.items():
-            found = any(kw in text_lower for kw in keywords)
-            audit_results[element] = found
-            if not found:
-              missing_count += 1
-
-          # --- Results Display ---
-          st.markdown("---")
-          st.subheader("📋 SOP Compliance Audit Report")
-
-          if sop_id_input or version_input:
-            st.caption(
-                f"**Document:** {sop_id_input or 'Unspecified'} | **Version:**"
-                f" {version_input or 'Unspecified'} | **Standard:**"
-                f" {target_standard}"
-            )
-
-          m1, m2, m3 = st.columns(3)
-          m1.metric("Target Benchmark", target_standard.split("(")[0].strip())
-          m2.metric(
-              "Mandatory Elements Found",
-              f"{len(mandatory_elements) - missing_count} /"
-              f" {len(mandatory_elements)}",
-          )
-          m3.metric(
-              "Audit Status",
-              "Needs Revision" if missing_count > 0 else "Fully Aligned",
-              delta="Action Required" if missing_count > 0 else "Passed",
-              delta_color="inverse" if missing_count > 0 else "normal",
-          )
-
-          st.markdown("### Structural Gap Breakdown")
-          for element, passed in audit_results.items():
-            if passed:
-              st.success(f"**[FOUND]** {element} section identified in text.")
-            else:
-              st.error(
-                  f"**[MISSING / UNCLEAR]** {element} section could not be"
-                  " detected. Recommended addition for compliance."
-              )
-
-          st.markdown("### Next Steps & Recommendations")
-          if missing_count > 0:
-            st.warning(
-                "Your document is missing critical sections required by standard"
-                " laboratory quality frameworks. Update the sections flagged"
-                " above before submitting for formal QA review."
-            )
-          else:
-            st.success(
-                "All primary structural and regulatory elements appear to be"
-                " present in this document text."
-            )
-
-    else:
-      st.info(
-          "Please upload an SOP text file above to initiate the compliance"
-          " audit."
-      )
-
-  elif sub_tool == "🤖 Gemini SOP & Compliance AI Advisor":
-    st.subheader("🤖 Gemini SOP Authoring & Regulatory Compliance Advisor")
-    st.write(
-        "Consult the AI advisor to draft missing SOP sections, interpret"
-        " complex CLIA/ISO compliance rules, or generate standardized"
-        " corrective wording."
+    # Sidebar or Main PDF Uploader
+    st.sidebar.header("📁 Document Intake")
+    uploaded_pdf = st.sidebar.file_uploader(
+        "Upload Custom SOP (PDF)", 
+        type=["pdf"], 
+        help="Upload lab manuals, equipment protocols, or CAPA procedures."
     )
 
-    sop_query = st.text_area(
-        "Describe your SOP drafting challenge or paste a section for"
-        " compliance review:"
-    )
+    default_sop_text = """
+    CLIA Section 4.2 Quality Control Policy:
+    1. Any 1_3s Westgard rule failure requires immediate suspension of clinical sample testing.
+    2. The operator must recalibrate the optical sensor array and rerun control Lot #204.
+    3. Document all corrective actions in the digital CAPA log before resuming patient testing.
+    4. ISO 17025 Section 5.4: Instrument recalibrations must be signed off by a certified Lab Quality Manager within 24 hours.
+    """
 
-    if st.button("Run AI SOP Consultation", type="primary"):
-      if not sop_query.strip():
-        st.warning("Please enter your SOP details or query.")
-      else:
-        api_key = st.secrets.get(
-            "GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", "")
-        )
-        if not api_key:
-          st.error(
-              "⚠️ GEMINI_API_KEY not found in Streamlit Secrets or Environment"
-              " Variables."
-          )
+    sop_text = ""
+    if uploaded_pdf is not None:
+        st.success(f"📄 Custom SOP Uploaded: **{uploaded_pdf.name}**")
+        extracted = rag_engine.extract_text_from_pdf(uploaded_pdf)
+        if "Error" not in extracted:
+            sop_text = extracted
+            st.info(f"Successfully extracted {len(sop_text)} characters from **{uploaded_pdf.name}**.")
         else:
-          with st.spinner("Analyzing regulatory compliance requirements..."):
-            try:
-              genai.configure(api_key=api_key)
-              model = genai.GenerativeModel("gemini-1.5-flash")
-              prompt = f"""
-                            You are an expert regulatory affairs officer, laboratory quality manager, and ISO/CLIA inspection specialist. 
-                            Provide rigorous, professional drafting assistance and compliance guidance based on the following SOP inquiry:
-                            {sop_query}
-                            """
-              response = model.generate_content(prompt)
-              st.markdown("### 📋 AI Regulatory & Drafting Guidance")
-              st.success(response.text)
-            except Exception as e:
-              st.error(f"API Error: {e}")
+            st.error(extracted)
+            sop_text = default_sop_text
+    else:
+        st.info("ℹ️ Using default embedded **CLIA/ISO Laboratory SOP Manual** (Upload a PDF in the sidebar to test custom documents).")
+        sop_text = default_sop_text
 
+    # Preview SOP Context
+    with st.expander("📖 Preview Extracted SOP Knowledge Base"):
+        st.text_area("Active SOP Text Content:", value=sop_text[:2000], height=200, disabled=True)
+
+    st.markdown("### 🔍 Interactive SOP Compliance Audit")
+    
+    query = st.text_input(
+        "Ask a regulatory or compliance query:",
+        placeholder="e.g., What are the required actions when a 1_3s Westgard failure occurs?"
+    )
+
+    if st.button("Run SOP Audit Query", type="primary", use_container_width=True):
+        if query.strip():
+            with st.spinner("Extracting SOP rules and grounding compliance analysis..."):
+                retrieved_context = rag_engine.retrieve_relevant_context(query, sop_text)
+                audit_result = rag_engine.query_rag_engine(
+                    query=query, 
+                    context=retrieved_context, 
+                    domain_role="CLIA/ISO Compliance Auditor"
+                )
+                
+                st.markdown("#### 📑 Compliance Audit Findings")
+                st.success(audit_result)
+                
+                with st.expander("🔍 View Retrieved SOP Context Snippets"):
+                    st.code(retrieved_context, language="text")
+        else:
+            st.warning("Please enter a compliance query above.")
 
 if __name__ == "__main__":
-  main()
+    main()
