@@ -15,7 +15,10 @@ except ImportError:
 # ---------------------------------------------------------
 def rag_qa_qc_tool(query: str) -> str:
   """Use this tool when asking about QA/QC logs, Westgard violations, control lot histories, or recalibration steps."""
-  mock_qc_data = "Lot #204 flagged 2026-10-25 for 1_3s Westgard violation. Control mean 12.4 vs 10.0 target. Action: Recalibrate optical sensor."
+  mock_qc_data = (
+      "Lot #204 flagged 2026-10-25 for 1_3s Westgard violation. Control mean"
+      " 12.4 vs 10.0 target. Action: Recalibrate optical sensor."
+  )
   context = rag_engine.retrieve_relevant_context(query, mock_qc_data)
   return rag_engine.query_rag_engine(
       query, context, "Clinical QA/QC Auditor"
@@ -24,7 +27,10 @@ def rag_qa_qc_tool(query: str) -> str:
 
 def rag_method_performance_tool(query: str) -> str:
   """Use this tool when asking about assay precision (%CV), linearity (R2), limit of detection (LOD), or method validation."""
-  mock_method_data = "Intra-assay precision %CV = 3.2% (Pass target < 5.0%). Linearity R2 = 0.998 across 10^2 to 10^7 copies/uL."
+  mock_method_data = (
+      "Intra-assay precision %CV = 3.2% (Pass target < 5.0%). Linearity R2 ="
+      " 0.998 across 10^2 to 10^7 copies/uL."
+  )
   context = rag_engine.retrieve_relevant_context(query, mock_method_data)
   return rag_engine.query_rag_engine(
       query, context, "Method Validation Specialist"
@@ -33,7 +39,10 @@ def rag_method_performance_tool(query: str) -> str:
 
 def rag_sop_compliance_tool(query: str) -> str:
   """Use this tool when asking about SOP manuals, CLIA '88 / ISO 17025 rules, regulatory policies, or CAPA procedures."""
-  mock_sop_data = "CLIA Section 4.2: Westgard 1_3s failure requires immediate testing suspension, sensor recalibration, and CAPA log entry."
+  mock_sop_data = (
+      "CLIA Section 4.2: Westgard 1_3s failure requires immediate testing"
+      " suspension, sensor recalibration, and CAPA log entry."
+  )
   context = rag_engine.retrieve_relevant_context(query, mock_sop_data)
   return rag_engine.query_rag_engine(
       query, context, "CLIA/ISO Compliance Auditor"
@@ -42,7 +51,10 @@ def rag_sop_compliance_tool(query: str) -> str:
 
 def rag_biofilm_diagnostics_tool(query: str) -> str:
   """Use this tool when asking about BiofilmNN imaging classification, microbial biomass, or microscopy diagnostics."""
-  mock_biofilm_data = "BiofilmNN Model: High microbial density detected (Class 3 biofilm). Coverage 78.4%, thickness 42.1 um."
+  mock_biofilm_data = (
+      "BiofilmNN Model: High microbial density detected (Class 3 biofilm)."
+      " Coverage 78.4%, thickness 42.1 um."
+  )
   context = rag_engine.retrieve_relevant_context(query, mock_biofilm_data)
   return rag_engine.query_rag_engine(
       query, context, "Microbial Diagnostics Specialist"
@@ -63,34 +75,43 @@ def run_agentic_reasoning(user_query: str) -> str:
     st.write("🔍 **Step 1: Inspecting query intent across platform RAG tools...**")
 
     if HAS_GENAI and api_key:
-      try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            tools=[
-                rag_qa_qc_tool,
-                rag_method_performance_tool,
-                rag_sop_compliance_tool,
-                rag_biofilm_diagnostics_tool,
-            ],
-        )
+      genai.configure(api_key=api_key)
+      tools_list = [
+          rag_qa_qc_tool,
+          rag_method_performance_tool,
+          rag_sop_compliance_tool,
+          rag_biofilm_diagnostics_tool,
+      ]
 
-        chat = model.start_chat(enable_automatic_function_calling=True)
-        st.write("🛠️ **Step 2: Dynamically routing to domain RAG engine...**")
-        response = chat.send_message(user_query)
+      candidate_models = [
+          "gemini-2.0-flash",
+          "gemini-1.5-flash",
+          "gemini-1.5-flash-latest",
+          "gemini-1.5-pro",
+      ]
 
-        st.write("🧪 **Step 3: Synthesizing multi-module intelligence report...**")
-        status.update(
-            label="✅ Live Multi-Module Agentic RAG Complete!",
-            state="complete",
-            expanded=False,
-        )
-        return response.text
+      for model_name in candidate_models:
+        try:
+          model = genai.GenerativeModel(
+              model_name=model_name, tools=tools_list
+          )
+          chat = model.start_chat(enable_automatic_function_calling=True)
+          st.write(f"🛠️ **Step 2: Connected via `{model_name}` endpoint...**")
+          response = chat.send_message(user_query)
 
-      except Exception as e:
-        st.warning(f"API execution fallback: {e}")
+          st.write(
+              "🧪 **Step 3: Synthesizing multi-module intelligence report...**"
+          )
+          status.update(
+              label="✅ Live Multi-Module Agentic RAG Complete!",
+              state="complete",
+              expanded=False,
+          )
+          return response.text
+        except Exception:
+          continue
 
-    # Local Fallback Execution Trace
+    # Fallback Local Keyword Execution Trace
     st.write("🛠️ **Step 2: Running local module RAG evaluations...**")
     results = [
         rag_qa_qc_tool(user_query),
