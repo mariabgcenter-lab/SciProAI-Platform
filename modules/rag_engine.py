@@ -40,7 +40,7 @@ def retrieve_relevant_context(
     if score > 0:
       scored_chunks.append((score, chunk))
 
-  scored_chunks.sort(key=lambda x: x[0], reverse=True)
+  scored_chunks.sort(key=lambda x: x, reverse=True)
   top_chunks = [chunk for score, chunk in scored_chunks[:top_k]]
 
   if top_chunks:
@@ -49,7 +49,7 @@ def retrieve_relevant_context(
 
 
 def query_rag_engine(query: str, context: str, domain_role: str) -> str:
-  """Executes Gemini 1.5 Flash query grounded strictly in retrieved context."""
+  """Executes Gemini query grounded strictly in retrieved context with fallback model routing."""
   api_key = st.secrets.get(
       "GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", "")
   )
@@ -57,22 +57,40 @@ def query_rag_engine(query: str, context: str, domain_role: str) -> str:
   if HAS_GENAI and api_key:
     try:
       genai.configure(api_key=api_key)
-      model = genai.GenerativeModel("gemini-1.5-flash")
 
-      prompt = f"""
-            You are an expert {domain_role}.
-            Answer the user query strictly using the retrieved context provided below. Cite specific sections, numbers, or rules where applicable.
+      # List of models to try in order of priority
+      candidate_models = [
+          "gemini-2.0-flash",
+          "gemini-1.5-flash",
+          "gemini-1.5-flash-latest",
+          "gemini-1.5-pro",
+      ]
 
-            User Query: {query}
+      last_error = None
+      for model_name in candidate_models:
+        try:
+          model = genai.GenerativeModel(model_name)
+          prompt = f"""
+                    You are an expert {domain_role}.
+                    Answer the user query strictly using the retrieved context provided below. Cite specific sections, numbers, or rules where applicable.
 
-            Retrieved Context:
-            {context}
-            """
+                    User Query: {query}
 
-      response = model.generate_content(prompt)
-      return response.text
+                    Retrieved Context:
+                    {context}
+                    """
+          response = model.generate_content(prompt)
+          if response and response.text:
+            return response.text
+        except Exception as model_err:
+          last_error = model_err
+          continue
+
+      if last_error:
+        return f"⚠️ Gemini API Model Error: {last_error}"
+
     except Exception as e:
-      return f"⚠️ Gemini RAG Error: {e}"
+      return f"⚠️ Gemini RAG Configuration Error: {e}"
 
   return (
       f"📄 **Simulated RAG Analysis ({domain_role}):**\n- Query processed:"
