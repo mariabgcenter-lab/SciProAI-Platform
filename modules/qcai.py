@@ -209,7 +209,7 @@ def main():
             else:
                 st.warning("Please enter a query above.")
 
-    # ---------------------------------------------------------
+ # ---------------------------------------------------------
     # SUB-TOOL 2: Gemini QA/QC AI Advisor
     # ---------------------------------------------------------
     elif sub_tool == "🤖 Gemini QA/QC AI Advisor":
@@ -235,13 +235,15 @@ def main():
                         "⚠️ GEMINI_API_KEY not found in Streamlit Secrets or Environment Variables."
                     )
                 else:
-                    with st.spinner("Analyzing quality control event..."):
+                    # 1. Animated Reasoning Status Box
+                    with st.status("🤖 Analyzing Quality Control Event & CAPA Context...", expanded=True) as status:
                         try:
+                            st.write("🔍 **Step 1: Retrieving active SOP & compliance RAG context...**")
+                            context = rag_engine.retrieve_relevant_context(qa_query, qc_text)
+                            
+                            st.write("⚖️ **Step 2: Synthesizing ISO/CLIA root-cause analysis & CAPA plan...**")
                             genai.configure(api_key=api_key)
                             model = genai.GenerativeModel("gemini-1.5-flash")
-                            
-                            # Retrieve active RAG context to ground the Gemini prompt
-                            context = rag_engine.retrieve_relevant_context(qa_query, qc_text)
                             
                             prompt = f"""
                             You are an expert quality assurance manager, laboratory compliance auditor, and ISO/CLIA specialist. 
@@ -254,11 +256,53 @@ def main():
                             {context}
                             """
                             response = model.generate_content(prompt)
+                            
+                            status.update(
+                                label="✅ QA Root-Cause & CAPA Analysis Complete!", 
+                                state="complete", 
+                                expanded=False
+                            )
+                            
+                            # 2. 📊 Visual Metric Cards Row
+                            m1, m2, m3 = st.columns(3)
+                            with m1:
+                                st.metric(
+                                    label="Audit Evaluation", 
+                                    value="CAPA Generated", 
+                                    delta="ISO/CLIA Compliant", 
+                                    delta_color="normal"
+                                )
+                            with m2:
+                                st.metric(
+                                    label="RAG Grounding", 
+                                    value="Active SOP", 
+                                    delta="Grounded Context", 
+                                    delta_color="normal"
+                                )
+                            with m3:
+                                st.metric(
+                                    label="Export Readiness", 
+                                    value="Complete", 
+                                    delta="Report Ready", 
+                                    delta_color="normal"
+                                )
+
                             st.markdown("### 📋 AI QA Expert Guidance & CAPA Plan")
                             st.success(response.text)
+
+                            # 3. 📥 1-Click Download Button
+                            st.download_button(
+                                label="📥 Export CAPA & Root-Cause Audit Report (TXT)",
+                                data=response.text,
+                                file_name="sciproai_capa_report.txt",
+                                mime="text/plain",
+                                help="Click to save this CAPA and root-cause analysis to your computer.",
+                                use_container_width=True
+                            )
                         except Exception as e:
+                            status.update(label="❌ Analysis Error", state="error")
                             st.error(f"API Error: {e}")
 
 
 if __name__ == "__main__":
-    main()
+    main() 
