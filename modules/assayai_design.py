@@ -61,25 +61,52 @@ def main():
     # ---------------------------------------------------------
     if module == "Assay Design Workspace":
         st.subheader("🧬 Assay Design Workspace")
-        target_name = st.text_input("Target name (gene, locus, pathogen):")
-        forward_primer = st.text_input("Forward primer sequence (5'→3'):")
-        reverse_primer = st.text_input("Reverse primer sequence (5'→3'):")
-        probe_sequence = st.text_input("Probe sequence (optional):")
+        st.write("Design qPCR/ddPCR target assays or click below to load standard sample parameters.")
 
-        if st.button("Generate Assay Summary"):
+        # 🧪 Sample Data Trigger Button
+        if st.button("🧪 Load Sample Assay Data", help="Click to fill standard Pseudomonas test primers"):
+            st.session_state["target_name"] = "Pseudomonas aeruginosa pelA"
+            st.session_state["fwd_primer"] = "ATGCGTACGTAGCTAGCTAG"
+            st.session_state["rev_primer"] = "CGTACCGACTGATCGATCGA"
+            st.session_state["probe_seq"] = "FAM-TCGCGATCGACTAG-BHQ1"
+            st.success("✅ Loaded sample target & primer data!")
+
+        # Dynamic inputs tied to session state keys
+        target_name = st.text_input(
+            "Target name (gene, locus, pathogen):", 
+            key="target_name",
+            value=st.session_state.get("target_name", "")
+        )
+        forward_primer = st.text_input(
+            "Forward primer sequence (5'→3'):", 
+            key="fwd_primer",
+            value=st.session_state.get("fwd_primer", "")
+        )
+        reverse_primer = st.text_input(
+            "Reverse primer sequence (5'→3'):", 
+            key="rev_primer",
+            value=st.session_state.get("rev_primer", "")
+        )
+        probe_sequence = st.text_input(
+            "Probe sequence (optional):", 
+            key="probe_seq",
+            value=st.session_state.get("probe_seq", "")
+        )
+
+        if st.button("Generate Assay Summary", type="primary"):
             if not target_name or not forward_primer or not reverse_primer:
                 st.warning("Please enter target name and both primer sequences.")
             else:
-                st.markdown("### Assay Summary")
-                st.write(f"**Target:** {target_name}")
-                st.write(f"**Forward Primer:** {forward_primer}")
-                st.write(f"**Reverse Primer:** {reverse_primer}")
+                st.markdown("### 📋 Assay Summary Report")
+                st.write(f"**Target:** `{target_name}`")
+                st.write(f"**Forward Primer:** `{forward_primer}` ({len(forward_primer)} bp)")
+                st.write(f"**Reverse Primer:** `{reverse_primer}` ({len(reverse_primer)} bp)")
                 if probe_sequence:
-                    st.write(f"**Probe:** {probe_sequence}")
-                st.write("""
-                This assay design can be exported to validation plans, SOPs, and ddPCR/qPCR optimization workflows.
-                """)
-
+                    st.write(f"**Probe:** `{probe_sequence}`")
+                
+                # Instant GC% calculation
+                gc_fwd = (forward_primer.count('G') + forward_primer.count('C')) / len(forward_primer) * 100 if forward_primer else 0
+                st.info(f"💡 **Forward Primer GC Content:** {gc_fwd:.1f}%")
     # ---------------------------------------------------------
     # MODULE 2 — Primer/Probe Table Explorer
     # ---------------------------------------------------------
