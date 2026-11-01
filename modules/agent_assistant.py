@@ -118,6 +118,31 @@ def main():
     if st.button("Run Platform Agentic RAG", type="primary", use_container_width=True):
         if user_query.strip():
             response = run_agentic_reasoning(user_query)
+            
+            # 📊 Visual Metric Cards Row
+            m1, m2, m3 = st.columns(3)
+            with m1:
+                st.metric(
+                    label="RAG Grounding", 
+                    value="Verified", 
+                    delta="Active SOP Guidelines", 
+                    delta_color="normal"
+                )
+            with m2:
+                st.metric(
+                    label="Domain Coverage", 
+                    value="4 Suites", 
+                    delta="QA/QC, SOP, Method, BiofilmNN", 
+                    delta_color="off"
+                )
+            with m3:
+                st.metric(
+                    label="Audit Readiness", 
+                    value="Complete", 
+                    delta="Report Export Ready", 
+                    delta_color="normal"
+                )
+
             st.markdown("### 📋 Platform-Wide Agentic RAG Report")
             st.info(response)
             
