@@ -47,7 +47,6 @@ def rag_biofilm_diagnostics_tool(query: str) -> str:
     context = rag_engine.retrieve_relevant_context(query, mock_biofilm_data)
     return rag_engine.query_rag_engine(query, context, "Microbial Diagnostics Specialist")
 
-
 # ---------------------------------------------------------
 # 2. Agentic Reasoning Loop (Multi-Tool Gemini RAG)
 # ---------------------------------------------------------
@@ -97,7 +96,6 @@ def run_agentic_reasoning(user_query: str) -> str:
         ]
         status.update(label="✅ Agent Workflow Complete!", state="complete", expanded=False)
         return "\n\n".join(results)
-
 
 # ---------------------------------------------------------
 # 3. Streamlit UI Render
