@@ -14,10 +14,10 @@ st.set_page_config(
 # Secure API Key Initialization (Streamlit Cloud Secrets)
 # ---------------------------------------------------------
 try:
-  gemini_key = st.secrets["GEMINI_API_KEY"]
-  os.environ["GEMINI_API_KEY"] = gemini_key
+    gemini_key = st.secrets["GEMINI_API_KEY"]
+    os.environ["GEMINI_API_KEY"] = gemini_key
 except Exception:
-  pass
+    pass
 
 # ---------------------------------------------------------
 # Import Core Modules
@@ -37,7 +37,7 @@ import modules.sopai as sopai
 # Sidebar Navigation (3 Clean Suites)
 # ---------------------------------------------------------
 if "nav_choice" not in st.session_state:
-  st.session_state.nav_choice = "🏠 Home & Agent Assistant"
+    st.session_state.nav_choice = "🏠 Home & Agent Assistant"
 
 st.sidebar.title("SciProAI Navigation")
 
@@ -61,62 +61,62 @@ st.sidebar.info(
 # Suite 1: Home & Agent Assistant
 # ---------------------------------------------------------
 if choice == "🏠 Home & Agent Assistant":
-  tab1, tab2 = st.tabs(["🏠 Platform Overview", "🤖 Agentic Lab Assistant"])
-  with tab1:
-    home.main()
-  with tab2:
-    agent_assistant.main()
+    tab1, tab2 = st.tabs(["🏠 Platform Overview", "🤖 Agentic Lab Assistant"])
+    with tab1:
+        home.main()
+    with tab2:
+        agent_assistant.main()
 
 # ---------------------------------------------------------
 # Suite 2: Compliance & Quality Suite (Untouched)
 # ---------------------------------------------------------
 elif choice == "🏢 Compliance & Quality Suite":
-  st.header("🏢 Enterprise Compliance & Quality Suite")
-  st.markdown(
-      "Automated Westgard rule evaluation, method precision verification, and"
-      " CLIA '88 / ISO 17025 SOP compliance auditing."
-  )
-  st.markdown("---")
+    st.header("🏢 Enterprise Compliance & Quality Suite")
+    st.markdown(
+        "Automated Westgard rule evaluation, method precision verification, and"
+        " CLIA '88 / ISO 17025 SOP compliance auditing."
+    )
+    st.markdown("---")
 
-  tab1, tab2, tab3 = st.tabs([
-      "📊 QA/QC Log & Audit Checker",
-      "🔬 Method Performance & Assay Suite",
-      "📄 SOP Version Control & Auditor",
-  ])
+    tab1, tab2, tab3 = st.tabs([
+        "📊 QA/QC Log & Audit Checker",
+        "🔬 Method Performance & Assay Suite",
+        "📄 SOP Version Control & Auditor",
+    ])
 
-  with tab1:
-    qcai.main()
-  with tab2:
-    methodai.main()
-  with tab3:
-    sopai.main()
+    with tab1:
+        qcai.main()
+    with tab2:
+        methodai.main()
+    with tab3:
+        sopai.main()
 
 # ---------------------------------------------------------
 # Suite 3: Bio-Digital Research Suite
 # ---------------------------------------------------------
 elif choice == "🔬 Bio-Digital Research Suite":
-  st.header("🔬 Bio-Digital Research & Computational Suite")
-  st.markdown(
-      "Microbial imaging diagnostics, biofilm biomass quantification, and"
-      " molecular assay design tools."
-  )
-  st.markdown("---")
+    st.header("🔬 Bio-Digital Research & Computational Suite")
+    st.markdown(
+        "Microbial imaging diagnostics, biofilm biomass quantification, and"
+        " molecular assay design tools."
+    )
+    st.markdown("---")
 
-  tab1, tab2, tab3, tab4, tab5 = st.tabs([
-      "🧬 AssayAI Design",
-      "📷 BiofilmAI Multimodal",
-      "🧠 BiofilmNN Diagnostics",
-      "📊 Dashboards Visualization",
-      "🧫 Biocontrol Inhibition",
-  ])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "🧬 AssayAI Design",
+        "📷 BiofilmAI Multimodal",
+        "🧠 BiofilmNN Diagnostics",
+        "📊 Dashboards Visualization",
+        "🧫 Biocontrol Inhibition",
+    ])
 
-  with tab1:
-    assayai_design.main()
-  with tab2:
-    biofilmai_multimodal.main()
-  with tab3:
-    biofilmnn_diagnostics.main()
-  with tab4:
-    dashboards_visualization.main()
-  with tab5:
-    biocontrol_inhibition.main()
+    with tab1:
+        assayai_design.main()
+    with tab2:
+        biofilmai_multimodal.main()
+    with tab3:
+        biofilmnn_diagnostics.main()
+    with tab4:
+        dashboards_visualization.main()
+    with tab5:
+        biocontrol_inhibition.main()
