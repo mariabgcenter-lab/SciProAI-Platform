@@ -120,6 +120,16 @@ def main():
             response = run_agentic_reasoning(user_query)
             st.markdown("### 📋 Platform-Wide Agentic RAG Report")
             st.info(response)
+            
+            # 📥 1-Click Download Button for Audit Reports
+            st.download_button(
+                label="📥 Export Compliance & Audit Report (TXT)",
+                data=response,
+                file_name="sciproai_agentic_audit_report.txt",
+                mime="text/plain",
+                help="Click to save a copy of this multi-domain compliance analysis to your local computer.",
+                use_container_width=True
+            )
         else:
             st.warning("Please enter a query above before running.")
 
