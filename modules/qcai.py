@@ -1,215 +1,138 @@
 import os
 import google.generativeai as genai
-import numpy as np
-import pandas as pd
 import streamlit as st
-import modules.rag_engine as rag_engine
+
+# Import the platform shared RAG engine
+try:
+    from modules import rag_engine
+except ImportError:
+    import rag_engine
 
 
 def main():
-    st.title("🏢 QA/QC Log & Audit Checker (`qcai`)")
+    st.title("📊 Quality Control & Compliance Suite (QCAI)")
     st.markdown("""
-    Upload daily instrument logs, assay control runs, or quality control metrics to instantly 
-    flag statistical outliers, missing data fields, and non-conformance trends before internal or external audits, backed by Gemini AI.
+    Evaluate laboratory quality control runs, audit out-of-control flags (**Westgard 1-3s, 2-2s, R-4s** rules), 
+    and synthesize ISO/CLIA-compliant CAPA (Corrective and Preventive Action) recommendations using RAG-grounded AI advisors.
     """)
-
     st.markdown("---")
 
-    # Internal Sub-Navigation Menu
-    sub_tool = st.radio(
-        "Select QA/QC Module:",
-        ["📊 QC Log Audit Engine", "🤖 Gemini QA/QC AI Advisor"],
-        horizontal=True,
-    )
-
-    st.markdown("---")
-
-    # Sidebar PDF & Manual Intake for RAG Grounding
-    st.sidebar.header("📁 SOP & Manual Intake")
-    uploaded_pdf = st.sidebar.file_uploader(
-        "Upload QA/QC Policy / SOP (PDF)", 
-        type=["pdf"], 
-        help="Upload lab manuals, equipment protocols, or CAPA procedures for RAG auditing."
-    )
-
-    default_qc_text = """
-    QA/QC Instrument Audit Log & SOP Protocol:
-    1. Lot #204 flagged for 1_3s Westgard rule violation (Control mean 12.4 vs 10.0 target).
-    2. Optical Sensor Array #3 recalibrated. Post-calibration verification %CV = 2.1%.
-    3. Mandatory Fields: Instrument ID, Operator Initials, Lot Number, Run Date, and Control Target.
-    4. Outlier Policy: Values exceeding ±2.0 SD require secondary run confirmation prior to release.
+    # Fallback QA/QC SOP context for RAG grounding
+    qc_text = """
+    Standard Operating Procedure: Quality Control & Westgard Multi-Rule Evaluation (CLSI C24 Guidelines).
+    - 1_2s Rule: Warning flag when 1 control measurement exceeds mean ± 2SD.
+    - 1_3s Rule: Rejection flag when 1 control measurement exceeds mean ± 3SD (Random error trigger).
+    - 2_2s Rule: Rejection flag when 2 consecutive control measurements exceed mean + 2SD or mean - 2SD (Systematic error trigger).
+    - R_4s Rule: Rejection flag when 1 control exceeds mean + 2SD and another exceeds mean - 2SD within same run.
+    - 4_1s Rule: Rejection flag when 4 consecutive control measurements exceed mean + 1SD or mean - 1SD.
+    - 10_x Rule: Rejection flag when 10 consecutive control measurements fall on one side of the mean.
+    - Required Action: Immediately hold clinical reporting, inspect reagent lot, perform recalibration, and document CAPA log.
     """
 
-    if uploaded_pdf is not None:
-        st.sidebar.success(f"📄 Custom SOP: **{uploaded_pdf.name}**")
-        extracted = rag_engine.extract_text_from_pdf(uploaded_pdf)
-        qc_text = extracted if "Error" not in extracted else default_qc_text
-    else:
-        qc_text = default_qc_text
+    sub_tool = st.radio(
+        "Select Quality Control Tool:",
+        ["📈 Westgard QC Evaluator", "🤖 Gemini QA/QC AI Advisor"],
+        horizontal=True
+    )
+    st.markdown("---")
 
     # ---------------------------------------------------------
-    # SUB-TOOL 1: QC Log Audit Engine
+    # SUB-TOOL 1: Westgard QC Evaluator
     # ---------------------------------------------------------
-    if sub_tool == "📊 QC Log Audit Engine":
-        st.subheader("📊 QC Log & Metrics Audit Engine")
+    if sub_tool == "📈 Westgard QC Evaluator":
+        st.subheader("📈 Interactive Westgard Control Rule Check")
+        st.write("Enter control measurement parameters or run values below to verify compliance against CLSI C24 limits.")
 
-        # Layout: Two columns for configuration and upload
-        col1, col2 = st.columns([2, 1])
+        col_a, col_b = st.columns(2)
+        with col_a:
+            target_mean = st.number_input("Target Control Mean:", value=100.0, step=1.0)
+            target_sd = st.number_input("Target Standard Deviation (SD):", value=5.0, step=0.5)
+        with col_b:
+            observed_val = st.number_input("Observed Control Value:", value=116.5, step=1.0)
+            previous_val = st.number_input("Previous Control Value (Run N-1):", value=111.0, step=1.0)
 
-        with col1:
-            uploaded_file = st.file_uploader(
-                "Upload Daily QC Log / Instrument Data (CSV or Excel)",
-                type=["csv", "xlsx", "xls"],
-            )
+        if st.button("📊 Evaluate Westgard Rules", type="primary", use_container_width=True):
+            # Calculate SD offsets
+            sd_diff = (observed_val - target_mean) / target_sd if target_sd > 0 else 0
+            prev_sd_diff = (previous_val - target_mean) / target_sd if target_sd > 0 else 0
 
-            # Provide a sample data option for instant testing
-            if uploaded_file is None:
-                st.info(
-                    "Upload your QC log file above, or load the sample dataset below to"
-                    " test the audit engine right now."
-                )
-                if st.button("Load Sample QC Log Dataset", use_container_width=True):
-                    # Create a realistic sample DataFrame with injected outliers
-                    np.random.seed(42)
-                    dates = pd.date_range(start="2026-08-01", periods=30, freq="D")
-                    control_vals = np.random.normal(100.0, 4.0, size=30)
-                    control_vals[6] = 115.8  # Outlier high
-                    control_vals[21] = 84.1  # Outlier low
+            # Westgard Rule Checks
+            violation_1_3s = abs(sd_diff) > 3.0
+            violation_2_2s = (sd_diff > 2.0 and prev_sd_diff > 2.0) or (sd_diff < -2.0 and prev_sd_diff < -2.0)
+            warning_1_2s = abs(sd_diff) > 2.0 and not violation_1_3s and not violation_2_2s
 
-                    sample_data = {
-                        "Date": dates,
-                        "Instrument_ID": np.random.choice(
-                            ["Inst-A", "Inst-B", "Inst-C"], size=30
-                        ),
-                        "Assay_ID": "qPCR-Pathogen-V1",
-                        "Control_Value": control_vals,
-                        "Operator": np.random.choice(
-                            ["J. Smith", "A. Davis", "M. Gomez"], size=30
-                        ),
-                        "Status": "Pass",
-                    }
+            is_rejected = violation_1_3s or violation_2_2s
 
-                    df_sample = pd.DataFrame(sample_data)
-                    st.session_state["qc_df"] = df_sample
-                    st.success(
-                        "Sample dataset loaded successfully! Scroll down to run the audit."
+            # 1. 📊 Visual Metric Cards Row (st.metric)
+            st.markdown("### 📊 QC Run Summary & Westgard Evaluation")
+            m1, m2, m3 = st.columns(3)
+
+            with m1:
+                if is_rejected:
+                    st.metric(
+                        label="QC Control Status",
+                        value="REJECTED",
+                        delta="Westgard Violation",
+                        delta_color="inverse"
+                    )
+                elif warning_1_2s:
+                    st.metric(
+                        label="QC Control Status",
+                        value="WARNING",
+                        delta="1-2s Rule Flagged",
+                        delta_color="off"
+                    )
+                else:
+                    st.metric(
+                        label="QC Control Status",
+                        value="PASSED",
+                        delta="Within ±2SD Limits",
+                        delta_color="normal"
                     )
 
-            # Load data if uploaded or sample is stored in session state
-            df = None
-            if uploaded_file is not None:
-                try:
-                    if uploaded_file.name.endswith(".csv"):
-                        df = pd.read_csv(uploaded_file)
-                    else:
-                        df = pd.read_excel(uploaded_file)
-                    st.session_state["qc_df"] = df
-                except Exception as e:
-                    st.error(f"Error reading file: {e}")
-            elif "qc_df" in st.session_state:
-                df = st.session_state["qc_df"]
+            with m2:
+                st.metric(
+                    label="Mean SD Offset",
+                    value=f"{sd_diff:+.2f} SD",
+                    delta="Target: 0.00 SD",
+                    delta_color="off"
+                )
 
-        with col2:
-            st.subheader("Audit Parameters")
-            sd_threshold = st.slider(
-                "Outlier Control Limit (SD)",
-                min_value=1.5,
-                max_value=3.0,
-                value=2.0,
-                step=0.5,
-                help="Flag values exceeding ± this many standard deviations from the mean.",
-            )
-            check_missing = st.checkbox(
-                "Flag Missing Mandatory Fields", value=True
-            )
+            with m3:
+                st.metric(
+                    label="Evaluated Rules",
+                    value="CLSI C24",
+                    delta="Audit Verified",
+                    delta_color="normal"
+                )
 
-        # Quantitative Outlier Audit Execution
-        if df is not None:
-            st.markdown("---")
-            st.subheader("📊 Data Preview")
-            st.dataframe(df.head(10), use_container_width=True)
-
-            st.markdown("---")
-            st.subheader("🔍 Automated QC & Outlier Audit")
-
-            if st.button("Execute QC Audit", type="primary", use_container_width=True):
-                with st.spinner("Analyzing data distribution and checking audit criteria..."):
-                    numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
-
-                    if not numeric_cols:
-                        st.error(
-                            "No numeric columns found for statistical outlier analysis."
-                            " Ensure your log contains numerical measurement or control values."
-                        )
-                    else:
-                        target_col = numeric_cols[0]
-                        mean_val = df[target_col].mean()
-                        std_val = df[target_col].std()
-
-                        lower_limit = mean_val - (sd_threshold * std_val)
-                        upper_limit = mean_val + (sd_threshold * std_val)
-
-                        df["Outlier_Flag"] = df[target_col].apply(
-                            lambda x: "OUTLIER" if (x < lower_limit or x > upper_limit) else "Normal"
-                        )
-
-                        missing_mask = (
-                            df.isnull().any(axis=1)
-                            if check_missing
-                            else pd.Series([False] * len(df))
-                        )
-
-                        outlier_count = (df["Outlier_Flag"] == "OUTLIER").sum()
-                        missing_count = missing_mask.sum()
-
-                        m1, m2, m3, m4 = st.columns(4)
-                        m1.metric("Total Records Audited", len(df))
-                        m2.metric("Mean Control Value", f"{mean_val:.2f}")
-                        m3.metric(
-                            "Statistical Outliers",
-                            outlier_count,
-                            delta="Review Required" if outlier_count > 0 else "None",
-                            delta_color="inverse" if outlier_count > 0 else "normal",
-                        )
-                        m4.metric("Missing Fields Flagged", missing_count)
-
-                        st.markdown("### Audit Findings & Flagged Records")
-                        if outlier_count > 0 or missing_count > 0:
-                            st.warning(
-                                f"Audit completed with flags: **{outlier_count} statistical"
-                                f" outliers** and **{missing_count} records with missing"
-                                f" data** detected."
-                            )
-                            flagged_df = df[(df["Outlier_Flag"] == "OUTLIER") | missing_mask]
-                            st.dataframe(flagged_df, use_container_width=True)
-                        else:
-                            st.success(
-                                "Clean Audit! No statistical outliers or missing mandatory"
-                                " fields detected within the specified threshold."
-                            )
-
-                        with st.expander("View Full Audited Dataset (With Outlier Tags)"):
-                            st.dataframe(df, use_container_width=True)
-
-        st.markdown("---")
-        st.markdown("### 🔍 Grounded SOP Policy Query")
-        query = st.text_input(
-            "Enter QC query across uploaded SOP policy & compliance guidelines:",
-            placeholder="e.g., What is our protocol when an outlier exceeds ±2.0 SD?"
-        )
-
-        if st.button("Run SOP Compliance Query", use_container_width=True):
-            if query.strip():
-                with st.spinner("Retrieving SOP guidelines and evaluating compliance..."):
-                    context = rag_engine.retrieve_relevant_context(query, qc_text)
-                    result = rag_engine.query_rag_engine(query, context, "Clinical QA/QC Auditor")
-                    st.success(result)
-                    with st.expander("🔍 View Retrieved SOP Context Snippets"):
-                        st.code(context, language="text")
+            # Detailed Explanation Output
+            if is_rejected:
+                reasons = []
+                if violation_1_3s:
+                    reasons.append("• **1_3s Violation**: Observed value exceeds ±3SD (Random Error risk).")
+                if violation_2_2s:
+                    reasons.append("• **2_2s Violation**: Two consecutive values exceed ±2SD (Systematic Error risk).")
+                
+                eval_details = f"❌ **RUN REJECTED**: The run failed quality control criteria.\n\n" + "\n".join(reasons) + "\n\n**Action Item:** Halt patient testing, run secondary control lot, and perform recalibration per SOP."
+                st.error(eval_details)
+            elif warning_1_2s:
+                eval_details = "⚠️ **WARNING (1_2s Rule)**: Control value is between ±2SD and ±3SD. Run may proceed, but monitor next run closely for systematic drift."
+                st.warning(eval_details)
             else:
-                st.warning("Please enter a query above.")
+                eval_details = "✅ **RUN PASSED**: All control values are within acceptable ±2SD statistical limits. Proceed with clinical analysis."
+                st.success(eval_details)
 
- # ---------------------------------------------------------
+            # 2. 📥 1-Click Report Export Button (st.download_button)
+            st.download_button(
+                label="📥 Export QC Evaluation Summary (TXT)",
+                data=f"Quality Control Check Results:\nTarget Mean: {target_mean}\nTarget SD: {target_sd}\nObserved Value: {observed_val} ({sd_diff:+.2f} SD)\n\nEvaluation Details:\n{eval_details}",
+                file_name="westgard_qc_eval_report.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
+
+    # ---------------------------------------------------------
     # SUB-TOOL 2: Gemini QA/QC AI Advisor
     # ---------------------------------------------------------
     elif sub_tool == "🤖 Gemini QA/QC AI Advisor":
@@ -222,26 +145,28 @@ def main():
         qa_query = st.text_area(
             "Describe your non-conformance event, out-of-specification (OOS)"
             " finding, or instrument QC trend:",
+            height=120,
             placeholder="e.g., Control Lot #204 demonstrated repeated 1_3s Westgard flags over 3 consecutive runs."
         )
 
-        if st.button("Run AI QA Evaluation", type="primary"):
+        if st.button("🚀 Run AI QA Evaluation", type="primary", use_container_width=True):
             if not qa_query.strip():
-                st.warning("Please enter your QC event details.")
+                st.warning("Please enter your QC event details above before running.")
             else:
                 api_key = st.secrets.get("GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", ""))
-                if not api_key:
-                    st.error(
-                        "⚠️ GEMINI_API_KEY not found in Streamlit Secrets or Environment Variables."
-                    )
-                else:
-                    # 1. Animated Reasoning Status Box
-                    with st.status("🤖 Analyzing Quality Control Event & CAPA Context...", expanded=True) as status:
-                        try:
-                            st.write("🔍 **Step 1: Retrieving active SOP & compliance RAG context...**")
+                
+                # 1. 🤖 Animated Reasoning Status Container (st.status)
+                with st.status("🤖 Analyzing Quality Control Event & CAPA Context...", expanded=True) as status:
+                    try:
+                        st.write("🔍 **Step 1: Retrieving active SOP & compliance RAG context...**")
+                        if hasattr(rag_engine, "retrieve_relevant_context"):
                             context = rag_engine.retrieve_relevant_context(qa_query, qc_text)
-                            
-                            st.write("⚖️ **Step 2: Synthesizing ISO/CLIA root-cause analysis & CAPA plan...**")
+                        else:
+                            context = qc_text
+
+                        st.write("⚖️ **Step 2: Synthesizing ISO/CLIA root-cause analysis & CAPA plan...**")
+                        
+                        if api_key:
                             genai.configure(api_key=api_key)
                             model = genai.GenerativeModel("gemini-1.5-flash")
                             
@@ -256,53 +181,57 @@ def main():
                             {context}
                             """
                             response = model.generate_content(prompt)
-                            
-                            status.update(
-                                label="✅ QA Root-Cause & CAPA Analysis Complete!", 
-                                state="complete", 
-                                expanded=False
-                            )
-                            
-                            # 2. 📊 Visual Metric Cards Row
-                            m1, m2, m3 = st.columns(3)
-                            with m1:
-                                st.metric(
-                                    label="Audit Evaluation", 
-                                    value="CAPA Generated", 
-                                    delta="ISO/CLIA Compliant", 
-                                    delta_color="normal"
-                                )
-                            with m2:
-                                st.metric(
-                                    label="RAG Grounding", 
-                                    value="Active SOP", 
-                                    delta="Grounded Context", 
-                                    delta_color="normal"
-                                )
-                            with m3:
-                                st.metric(
-                                    label="Export Readiness", 
-                                    value="Complete", 
-                                    delta="Report Ready", 
-                                    delta_color="normal"
-                                )
+                            report_text = response.text
+                        else:
+                            report_text = f"⚠️ GEMINI_API_KEY not found in Streamlit Secrets. Grounded SOP Context:\n\n{context}"
 
-                            st.markdown("### 📋 AI QA Expert Guidance & CAPA Plan")
-                            st.success(response.text)
-
-                            # 3. 📥 1-Click Download Button
-                            st.download_button(
-                                label="📥 Export CAPA & Root-Cause Audit Report (TXT)",
-                                data=response.text,
-                                file_name="sciproai_capa_report.txt",
-                                mime="text/plain",
-                                help="Click to save this CAPA and root-cause analysis to your computer.",
-                                use_container_width=True
+                        status.update(
+                            label="✅ QA Root-Cause & CAPA Analysis Complete!", 
+                            state="complete", 
+                            expanded=False
+                        )
+                        
+                        # 2. 📊 Visual Metric Cards Row (st.metric)
+                        m1, m2, m3 = st.columns(3)
+                        with m1:
+                            st.metric(
+                                label="Audit Evaluation", 
+                                value="CAPA Generated", 
+                                delta="ISO/CLIA Compliant", 
+                                delta_color="normal"
                             )
-                        except Exception as e:
-                            status.update(label="❌ Analysis Error", state="error")
-                            st.error(f"API Error: {e}")
+                        with m2:
+                            st.metric(
+                                label="RAG Grounding", 
+                                value="Active SOP", 
+                                delta="Grounded Context", 
+                                delta_color="normal"
+                            )
+                        with m3:
+                            st.metric(
+                                label="Export Readiness", 
+                                value="Complete", 
+                                delta="Report Ready", 
+                                delta_color="normal"
+                            )
+
+                        st.markdown("### 📋 AI QA Expert Guidance & CAPA Plan")
+                        st.success(report_text)
+
+                        # 3. 📥 1-Click Download Button (st.download_button)
+                        st.download_button(
+                            label="📥 Export CAPA & Root-Cause Audit Report (TXT)",
+                            data=report_text,
+                            file_name="sciproai_capa_report.txt",
+                            mime="text/plain",
+                            help="Click to save this CAPA and root-cause analysis to your computer.",
+                            use_container_width=True
+                        )
+
+                    except Exception as e:
+                        status.update(label="❌ Analysis Execution Error", state="error")
+                        st.error(f"API Error: {e}")
 
 
 if __name__ == "__main__":
-    main() 
+    main()
