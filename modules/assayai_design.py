@@ -1,4 +1,4 @@
-mport os
+import os
 import google.generativeai as genai
 import matplotlib.pyplot as plt
 import numpy as np
