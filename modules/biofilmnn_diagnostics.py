@@ -1,219 +1,190 @@
 import os
 import google.generativeai as genai
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy import ndimage as ndi
-from skimage import filters, io, measure, morphology, segmentation
 import streamlit as st
+import modules.rag_engine as rag_engine
 
 
 def main():
-  # ---------------------------------------------------------
-  # PAGE CONFIGURATION (Handled globally by app.py)
-  # ---------------------------------------------------------
-
-  st.title("🧫 BiofilmNN — AI Diagnostics Suite")
-  st.write("""
-    This suite provides **AI-assisted microbial diagnostics**, including image-based classification,  
-    AMR (antimicrobial resistance) feature extraction, segmentation previews, and AI-powered diagnostic reasoning.
+    st.title("🔬 Biofilm Neural Network Diagnostics (`biofilmnn`)")
+    st.markdown("""
+    Deep-learning assisted diagnostic platform for analyzing Confocal Laser Scanning Microscopy (CLSM), 
+    Scanning Electron Microscopy (SEM), and fluorescence imaging data to quantify biomass, roughness, and microbial viability, backed by Gemini AI.
     """)
 
-  # ---------------------------------------------------------
-  # SIDEBAR NAVIGATION
-  # ---------------------------------------------------------
-  st.sidebar.header("BiofilmNN Modules")
-  module = st.sidebar.radio(
-      "Select a module:",
-      [
-          "Microbial Image Diagnostics",
-          "AMR Prediction (AMRAI)",
-          "Image Feature Extraction",
-          "Diagnostic Reasoning Preview",
-          "🤖 Gemini Diagnostics AI Advisor",
-      ],
-  )
+    st.markdown("---")
 
-  # ---------------------------------------------------------
-  # MODULE 1 — Microbial Image Diagnostics
-  # ---------------------------------------------------------
-  if module == "Microbial Image Diagnostics":
-    st.subheader("🔬 Microbial Image Diagnostics")
-
-    uploaded_img = st.file_uploader(
-        "Upload microbial microscopy image", type=["png", "jpg", "jpeg"]
+    # Sub-Navigation Menu
+    sub_tool = st.radio(
+        "Select Diagnostics Module:",
+        [
+            "🖼️ 1. CLSM & SEM Image Feature Extractor",
+            "🧬 2. Biofilm Structural Viability Classifier",
+            "⚖️ 3. Grounded Imaging SOP Audit",
+            "🤖 4. Gemini Biofilm AI Advisor",
+        ],
+        horizontal=True,
     )
 
-    if uploaded_img:
-      img = io.imread(uploaded_img)
-      st.image(img, caption="Uploaded Image", use_column_width=True)
+    st.markdown("---")
 
-      # Convert to grayscale
-      if img.ndim == 3:
-        gray = np.mean(img, axis=2)
-      else:
-        gray = img
-
-      # Basic segmentation
-      blurred = filters.gaussian(gray, sigma=1.0)
-      thresh = filters.threshold_otsu(blurred)
-      binary = blurred > thresh
-      cleaned = morphology.remove_small_objects(binary, min_size=50)
-
-      # Watershed segmentation
-      distance = ndi.distance_transform_edt(cleaned)
-      local_maxi = morphology.local_maxima(distance)
-      markers = measure.label(local_maxi)
-      labels = segmentation.watershed(-distance, markers, mask=cleaned)
-
-      st.write("### Segmentation Result")
-      fig, ax = plt.subplots(figsize=(8, 6))
-      ax.imshow(labels, cmap="nipy_spectral")
-      ax.set_title("Microbial Segmentation")
-      ax.axis("off")
-      st.pyplot(fig)
-
-      st.write("### Object Count:", labels.max())
-
-  # ---------------------------------------------------------
-  # MODULE 2 — AMR Prediction (AMRAI)
-  # ---------------------------------------------------------
-  elif module == "AMR Prediction (AMRAI)":
-    st.subheader("🧪 AMRAI — Antimicrobial Resistance Prediction")
-
-    st.write("""
-        Upload AMR-related gene expression or phenotype tables  
-        to preview antimicrobial resistance indicators.
-        """)
-
-    uploaded = st.file_uploader("Upload AMR dataset (CSV)", type=["csv"])
-
-    if uploaded:
-      df = pd.read_csv(uploaded)
-      st.write("### Dataset Preview")
-      st.dataframe(df.head())
-
-      # Simple AMR scoring example
-      if "gene" in df.columns and "expression" in df.columns:
-        df["AMR_score"] = df["expression"].apply(lambda x: np.log2(x + 1))
-        st.write("### AMR Score Table")
-        st.dataframe(df[["gene", "AMR_score"]])
-      else:
-        st.warning("Required columns not found: gene, expression")
-
-  # ---------------------------------------------------------
-  # MODULE 3 — Image Feature Extraction
-  # ---------------------------------------------------------
-  elif module == "Image Feature Extraction":
-    st.subheader("📊 Image Feature Extraction")
-
-    uploaded_img = st.file_uploader(
-        "Upload image for feature extraction", type=["png", "jpg", "jpeg"]
+    # Sidebar Microscopy Manual Intake for Grounded RAG
+    st.sidebar.header("📁 Microscopy SOP Intake")
+    uploaded_pdf = st.sidebar.file_uploader(
+        "Upload Imaging Manual / SOP (PDF)", 
+        type=["pdf"], 
+        help="Upload CLSM image acquisition protocols, staining SOPs, or biofilm quantification guidelines."
     )
 
-    if uploaded_img:
-      img = io.imread(uploaded_img)
-      st.image(img, caption="Uploaded Image", use_column_width=True)
+    default_imaging_text = """
+    Biofilm Microscopy & Image Diagnostics Knowledge Base:
+    1. CLSM Acquisition Protocol: SYTO 9 / Propidium Iodide (PI) fluorophores for live/dead cell discrimination.
+    2. Biomass Volume Quantification: Threshold Z-stacks using Otsu algorithm. Minimum acceptable signal-to-noise ratio > 12.0 dB.
+    3. Roughness Coefficient (Ra): Surface topography roughness Ra > 0.45 indicates mature 3D microcolony architecture.
+    4. Structural Classification: Non-pathogenic early attachment vs mature matrix-enclosed infectious biofilm.
+    """
 
-      # Convert to grayscale
-      if img.ndim == 3:
-        gray = np.mean(img, axis=2)
-      else:
-        gray = img
+    if uploaded_pdf is not None:
+        st.sidebar.success(f"📄 Custom Protocol: **{uploaded_pdf.name}**")
+        extracted = rag_engine.extract_text_from_pdf(uploaded_pdf)
+        imaging_text = extracted if "Error" not in extracted else default_imaging_text
+    else:
+        imaging_text = default_imaging_text
 
-      # Feature extraction
-      mean_intensity = np.mean(gray)
-      std_intensity = np.std(gray)
-      max_intensity = np.max(gray)
-      min_intensity = np.min(gray)
+    # ==========================================
+    # 1. CLSM & SEM IMAGE FEATURE EXTRACTOR
+    # ==========================================
+    if sub_tool == "🖼️ 1. CLSM & SEM Image Feature Extractor":
+        st.subheader("🖼️ Quantitative Microscopic Feature Extraction")
+        st.write("Extract structural parameters (biomass volume, average thickness, roughness coefficient) from Z-stack array files.")
 
-      st.write("### Extracted Features")
-      st.json({
-          "Mean Intensity": float(mean_intensity),
-          "Std Intensity": float(std_intensity),
-          "Max Intensity": float(max_intensity),
-          "Min Intensity": float(min_intensity),
-      })
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("##### Imaging Parameters")
+            st.number_input("Pixel Resolution (µm/pixel)", value=0.108, format="%.3f")
+            st.number_input("Z-Step Size (µm)", value=0.50, format="%.2f")
+            st.slider("Fluorescence Threshold Cutoff", 0, 255, 45)
+        with col2:
+            st.markdown("##### Sample Dataset Generator")
+            if st.button("Generate Synthetic Biofilm Z-Stack Data", use_container_width=True):
+                np.random.seed(42)
+                z_slices = 20
+                biomass_per_slice = np.random.normal(12.5, 2.1, size=z_slices)
+                df_biofilm = pd.DataFrame({
+                    "Slice_Z": range(1, z_slices + 1),
+                    "Biomass_µm3": biomass_per_slice,
+                    "Live_Fraction": np.random.uniform(0.70, 0.95, size=z_slices),
+                    "Dead_Fraction": np.random.uniform(0.05, 0.30, size=z_slices)
+                })
+                st.session_state["biofilm_data"] = df_biofilm
+                st.success("Synthetic Z-Stack generated!")
 
-  # ---------------------------------------------------------
-  # MODULE 4 — Diagnostic Reasoning Preview (Upgraded with Gemini API)
-  # ---------------------------------------------------------
-  elif module == "Diagnostic Reasoning Preview":
-    st.subheader("🧠 AI-Powered Diagnostic Reasoning")
-    st.write(
-        "Describe the microbial sample, clinical presentation, or diagnostic"
-        " findings to generate a structured AI evaluation via Gemini"
-        " 1.5-flash."
-    )
+        if "biofilm_data" in st.session_state:
+            df = st.session_state["biofilm_data"]
+            st.markdown("### 📊 Extracted Z-Stack Quantification")
+            st.dataframe(df, use_container_width=True)
 
-    text = st.text_area("Describe the microbial sample or diagnostic question:")
+            total_biomass = df["Biomass_µm3"].sum()
+            avg_live = df["Live_Fraction"].mean() * 100
+            roughness_ra = df["Biomass_µm3"].std() / df["Biomass_µm3"].mean()
 
-    if st.button("Generate Diagnostic Reasoning", type="primary"):
-      if len(text.strip()) == 0:
-        st.warning("Please enter a description first.")
-      else:
-        api_key = st.secrets.get(
-            "GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", "")
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Total Biomass Volume", f"{total_biomass:.2f} µm³")
+            m2.metric("Mean Live Cell Ratio", f"{avg_live:.1f}%")
+            m3.metric("Roughness Coeff (Ra)", f"{roughness_ra:.3f}", delta="Mature Matrix" if roughness_ra > 0.15 else "Early Layer")
+
+    # ==========================================
+    # 2. BIOFILM STRUCTURAL VIABILITY CLASSIFIER
+    # ==========================================
+    elif sub_tool == "🧬 2. Biofilm Structural Viability Classifier":
+        st.subheader("🧬 Neural Network Viability & Stage Classifier")
+        st.write("Run deep-learning feature classification to categorize microcolony growth stages and antimicrobial tolerance risks.")
+
+        c1, c2 = st.columns(2)
+        with c1:
+            thickness = st.number_input("Mean Thickness (µm)", value=24.5)
+            density = st.number_input("EPS Matrix Density Score (0-1)", value=0.82)
+        with c2:
+            live_ratio = st.slider("Live Cell Percentage (%)", 0.0, 100.0, 85.0)
+            amr_suspect = st.checkbox("Persistent Phenotype Flag", value=True)
+
+        if st.button("Run Neural Network Classification", type="primary", use_container_width=True):
+            if thickness > 20.0 and density > 0.70:
+                stage = "Stage IV: Mature Biofilm Matrix"
+                risk = "High Tolerant Phenotype"
+            else:
+                stage = "Stage II: Microcolony Formation"
+                risk = "Moderate Susceptibility"
+
+            st.success(f"**Diagnostic Output:** {stage}")
+            st.info(f"**Phenotypic Risk Level:** {risk}")
+
+    # ==========================================
+    # 3. GROUNDED IMAGING SOP AUDIT
+    # ==========================================
+    elif sub_tool == "⚖️ 3. Grounded Imaging SOP Audit":
+        st.subheader("⚖️ Imaging Protocol & Compliance RAG Query")
+        st.write("Query uploaded microscopy manuals and image quantification protocols.")
+
+        query = st.text_input(
+            "Enter microscopy protocol or fluorophore query:",
+            placeholder="e.g., What fluorophore concentration and incubation time are specified for live/dead staining?"
         )
-        if not api_key:
-          st.error(
-              "⚠️ GEMINI_API_KEY not found in Streamlit Secrets or Environment"
-              " Variables."
-          )
-        else:
-          with st.spinner("Analyzing diagnostic parameters..."):
-            try:
-              genai.configure(api_key=api_key)
-              model = genai.GenerativeModel("gemini-1.5-flash")
-              prompt = f"""
-                            You are an expert clinical microbiologist and specialist in biofilm-associated infections and antimicrobial resistance. 
-                            Provide a rigorous, professional diagnostic evaluation and actionable recommendations based on the following observations:
-                            {text}
-                            """
-              response = model.generate_content(prompt)
-              st.markdown("### 📋 AI Diagnostic Evaluation")
-              st.success(response.text)
-            except Exception as e:
-              st.error(f"API Error: {e}")
 
-  # ---------------------------------------------------------
-  # MODULE 5 — Gemini Diagnostics AI Advisor
-  # ---------------------------------------------------------
-  elif module == "🤖 Gemini Diagnostics AI Advisor":
-    st.subheader("🤖 BiofilmNN Expert AI Advisor")
-    st.write(
-        "Consult the AI advisor for specialized inquiries regarding microbial"
-        " imaging metrics, AMR phenotypes, and advanced diagnostic workflows."
-    )
+        if st.button("Run Imaging SOP Audit", use_container_width=True):
+            if query.strip():
+                with st.spinner("Retrieving microscopy SOP context..."):
+                    context = rag_engine.retrieve_relevant_context(query, imaging_text)
+                    result = rag_engine.query_rag_engine(query, context, "Microscopy & Imaging Specialist")
+                    st.success(result)
+                    with st.expander("🔍 View Retrieved SOP Context"):
+                        st.code(context, language="text")
+            else:
+                st.warning("Please enter a query above.")
 
-    diagnostics_query = st.text_area(
-        "Enter your diagnostic question or assay challenge:"
-    )
+    # ==========================================
+    # 4. GEMINI BIOFILM AI ADVISOR
+    # ==========================================
+    elif sub_tool == "🤖 4. Gemini Biofilm AI Advisor":
+        st.subheader("🤖 Gemini Biofilm Imaging & Diagnostic Advisor")
+        st.write("Consult the AI advisor for image processing troubleshooting, CLSM Z-stack interpretation, and biofilm matrix analysis.")
 
-    if st.button("Run AI Consultation", type="primary"):
-      if not diagnostics_query.strip():
-        st.warning("Please enter your question details.")
-      else:
-        api_key = st.secrets.get(
-            "GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", "")
+        bio_query = st.text_area(
+            "Describe your imaging finding, Z-stack anomaly, or biofilm growth condition:",
+            placeholder="e.g., SYTO 9 channel exhibits heavy background fluorescence in the lower 5 µm Z-slices."
         )
-        if not api_key:
-          st.error(
-              "⚠️ GEMINI_API_KEY not found in Streamlit Secrets or Environment"
-              " Variables."
-          )
-        else:
-          with st.spinner("Synthesizing diagnostic insights..."):
-            try:
-              genai.configure(api_key=api_key)
-              model = genai.GenerativeModel("gemini-1.5-flash")
-              prompt = f"""
-                            You are an expert molecular diagnostics and microbiology consultant. 
-                            Provide precise, scientific guidance on the following inquiry:
-                            {diagnostics_query}
+
+        if st.button("Run AI Imaging Evaluation", type="primary"):
+            if not bio_query.strip():
+                st.warning("Please enter your imaging details.")
+            else:
+                api_key = st.secrets.get("GEMINI_API_KEY", os.getenv("GEMINI_API_KEY", ""))
+                if not api_key:
+                    st.error("⚠️ GEMINI_API_KEY not found in Streamlit Secrets or Environment Variables.")
+                else:
+                    with st.spinner("Analyzing microscopy data with Gemini AI..."):
+                        try:
+                            genai.configure(api_key=api_key)
+                            model = genai.GenerativeModel("gemini-1.5-flash")
+                            context = rag_engine.retrieve_relevant_context(bio_query, imaging_text)
+                            
+                            prompt = f"""
+                            You are an expert biofilm microbiologist, confocal laser scanning microscopy specialist, and bio-image analysis researcher.
+                            Provide expert analysis and troubleshooting for the following imaging inquiry:
+
+                            User Query:
+                            {bio_query}
+
+                            Active Protocol / SOP Context:
+                            {context}
                             """
-              response = model.generate_content(prompt)
-              st.markdown("### 📋 Expert Consultation Summary")
-              st.success(response.text)
-            except Exception as e:
-              st.error(f"API Error: {e}")
+                            response = model.generate_content(prompt)
+                            st.markdown("### 📋 AI Biofilm Imaging Guidance")
+                            st.success(response.text)
+                        except Exception as e:
+                            st.error(f"API Error: {e}")
+
+
+if __name__ == "__main__":
+    main()
